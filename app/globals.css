@@ -1,0 +1,212 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-bricolage);
+  --font-hand: var(--font-caveat);
+  /* `bg-baseplate` / `text-baseplate` / `border-baseplate` resolve to whichever
+     baseplate colour is in scope — see the [data-baseplate-color] rules below. */
+  --color-baseplate: var(--baseplate);
+  --color-baseplate-red: var(--baseplate-red);
+  --color-baseplate-yellow: var(--baseplate-yellow);
+  --color-baseplate-blue: var(--baseplate-blue);
+  --color-baseplate-green: var(--baseplate-green);
+  --color-baseplate-orange: var(--baseplate-orange);
+  --color-baseplate-azure: var(--baseplate-azure);
+  --color-baseplate-purple: var(--baseplate-purple);
+  --color-baseplate-sand: var(--baseplate-sand);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Lego colours — one per baseplate, set in each baseplate's index.jsx as
+     `color: "blue"`. Teams get an identity ("we're the blue team") and the
+     nav, the landing cards and the baseplate wall all pick it up for free.
+     THE COLOUR IS A BASEPLATE'S IDENTITY, SO NO TWO MAY SHARE ONE — there are
+     eight here for eight baseplates. Adding a ninth baseplate means adding a
+     ninth colour on all three of: this block, the `.dark` block below, the
+     `[data-baseplate-color]` rules below, and the `@theme` list at the top. */
+  --baseplate-red: oklch(0.55 0.21 27);
+  --baseplate-yellow: oklch(0.78 0.16 84);
+  --baseplate-blue: oklch(0.5 0.19 258);
+  --baseplate-green: oklch(0.52 0.14 152);
+  --baseplate-orange: oklch(0.68 0.17 52);
+  --baseplate-azure: oklch(0.6 0.14 233);
+  --baseplate-purple: oklch(0.5 0.2 305);
+  /* LEGO sand — the quiet one, for the blank `flat` baseplate. */
+  --baseplate-sand: oklch(0.52 0.06 75);
+  --baseplate: var(--baseplate-blue);
+
+  /* Chart chrome for the Building Dashboard — grid, axes, tooltip, cursor.
+     Kept as CSS variables so the charts follow the theme without a single
+     brick knowing the theme exists: `baseplates/building-dashboard/chartTheme.js`
+     hands these straight to Recharts, and SVG presentation attributes accept
+     `var()`. Series colours are NOT here — those live in project.json, which
+     carries a stepped pair per department. */
+  --chart-surface: var(--card);
+  --chart-grid: oklch(0.91 0.005 90);
+  --chart-axis: oklch(0.79 0.01 90);
+  --chart-ink: oklch(0.57 0.008 90);
+  --chart-cursor: oklch(0.145 0 0 / 4%);
+  --chart-tooltip-border: oklch(0.145 0 0 / 10%);
+  --chart-tooltip-shadow: 0 2px 8px oklch(0.145 0 0 / 8%);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+
+  /* Lifted for contrast against a dark background. */
+  --baseplate-red: oklch(0.68 0.19 27);
+  --baseplate-yellow: oklch(0.86 0.16 90);
+  --baseplate-blue: oklch(0.68 0.16 258);
+  --baseplate-green: oklch(0.7 0.15 152);
+  --baseplate-orange: oklch(0.78 0.16 55);
+  --baseplate-azure: oklch(0.75 0.13 233);
+  --baseplate-purple: oklch(0.72 0.16 305);
+  --baseplate-sand: oklch(0.79 0.06 80);
+
+  /* Chart chrome, stepped for the dark card rather than dimmed from light. */
+  --chart-grid: oklch(0.28 0 0);
+  --chart-axis: oklch(0.42 0 0);
+  --chart-ink: oklch(0.65 0 0);
+  --chart-cursor: oklch(1 0 0 / 6%);
+  --chart-tooltip-border: oklch(1 0 0 / 12%);
+  --chart-tooltip-shadow: 0 2px 10px oklch(0 0 0 / 50%);
+}
+
+/* Scope a baseplate's colour to a subtree. The baseplate and every brick on it
+   can then use `text-baseplate` / `bg-baseplate/10` / `border-baseplate` with no
+   dynamic class names — which matters, because Tailwind can't see a class
+   built at runtime. */
+[data-baseplate-color="red"] { --baseplate: var(--baseplate-red); }
+[data-baseplate-color="yellow"] { --baseplate: var(--baseplate-yellow); }
+[data-baseplate-color="blue"] { --baseplate: var(--baseplate-blue); }
+[data-baseplate-color="green"] { --baseplate: var(--baseplate-green); }
+[data-baseplate-color="orange"] { --baseplate: var(--baseplate-orange); }
+[data-baseplate-color="azure"] { --baseplate: var(--baseplate-azure); }
+[data-baseplate-color="purple"] { --baseplate: var(--baseplate-purple); }
+[data-baseplate-color="sand"] { --baseplate: var(--baseplate-sand); }
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  button:not(:disabled), [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  html {
+    @apply font-sans;
+  }
+  /* One rule, and every heading in the app picks up the display face. */
+  h1, h2, h3, h4 {
+    @apply font-heading;
+  }
+}
