@@ -1,0 +1,6 @@
+# Prettier is not a dependency of this repo and nothing in CI runs it. This file
+# is here for editors that format on save with their own bundled Prettier.
+
+public/sample-data/
+.next/
+package-lock.json

@@ -91,7 +91,7 @@ starter end in `-XX`, which is nobody's initials. Only the brick id carries
 initials — tool ids, panel ids and message `kind`s belong to the baseplate's
 contract and stay plain.
 
-**Friday git (the whole room shares this repo):**
+**Wednesday git (the whole room shares this repo):**
 
 - Your branch is your **GitHub username**, all day. Do not make a branch per brick.
 - Each PR adds **one new folder** (plus two lines in that baseplate's
@@ -99,7 +99,7 @@ contract and stay plain.
 - After a merge is announced: commit your work, then `git pull origin main`.
   If git asks, keep both.
 
-### Friday Git loop for agents
+### Wednesday Git loop for agents
 
 Use this exact loop repeatedly. Do not create a new branch, merge a PR, or push
 directly to `main`.
@@ -181,7 +181,7 @@ for it. ("Project" survives only in its architectural sense: `lib/projectData.js
 and `sample-data/project.json` describe a *building*.)
 
 Read this file before changing anything. The contract for a given surface is
-at the top of that baseplate's `bricks/bricks.js`. On Friday morning the only
+at the top of that baseplate's `bricks/bricks.js`. On Wednesday morning the only
 surface in the tree is `flat`; more appear in the nav after facilitators merge
 a phase. Do not add a baseplate — snap a brick onto one that exists.
 `baseplates/flat/bricks/bricks.js` is the one to copy first.

@@ -6,7 +6,7 @@ Facilitator notes. Not attendee-facing. The day already has an arc; this file is
 
 ---
 
-## Locked for Friday
+## Locked for Wednesday
 
 These are decided. Do not reopen them in the room.
 
@@ -16,7 +16,7 @@ These are decided. Do not reopen them in the room.
 - **Two facilitators merge.** Attendees never press Merge.
 - Vercel previews are on. Production (or a named alias) should track `gallery`.
 - First README prompt = **nametag**.
-- This file is Friday-only. Monday / template-vs-fork is out of scope here.
+- This file is Wednesday-only. Monday / template-vs-fork is out of scope here.
 
 ## The branches that actually exist
 
@@ -28,9 +28,9 @@ main                    ← 9am. Flat only. Codespaces boot this.
               └── phase/remix ← merge ~2:45. Dashboard, 3D, PDF, artifacts, Navy Yard.
 ```
 
-Stacked means each branch **contains the previous one**. Creating them as siblings by deleting from today’s tree would make Friday’s merges drop files instead of adding them. They were built additively: peel `main` to Card, then check files back in on each later branch.
+Stacked means each branch **contains the previous one**. Creating them as siblings by deleting from today’s tree would make Wednesday’s merges drop files instead of adding them. They were built additively: peel `main` to Card, then check files back in on each later branch.
 
-Friday merge order, always into `main`, always while the room is listening (or at lunch):
+Wednesday merge order, always into `main`, always while the room is listening (or at lunch):
 
 1. Merge the Iterate PR, tell the room to `git pull origin main`.
 2. Merge the Call AI PR (at lunch). Pull at the start of session 3.

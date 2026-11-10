@@ -1,8 +1,10 @@
-# Friday workshop
+# Collaborative Vibe Coding for AEC
+
+AEC Tech NYC · Wednesday, November 11 · Verizon Education Center, Cornell Tech
 
 One shared repo. One branch (your GitHub username). One new folder per pull request. Two facilitators merge — **you never press Merge**.
 
-[Create a Codespace](https://codespaces.new/pwluke/aec-tech-boston-workshop)
+[Create a Codespace](https://codespaces.new/lukegehron/aec-tech-nyc-workshop-2026)
 
 ## 1 · Create your branch
 
@@ -38,7 +40,7 @@ Then: look at the browser (not the diff first). Steer with a follow-up, or resto
 
 When the brick looks right, ask Cline to ship it. Paste this:
 
-> Follow the **Friday Git loop for agents** in `AGENTS.md`. Review the changes
+> Follow the **Wednesday Git loop for agents** in `AGENTS.md`. Review the changes
 > for this brick and run the relevant checks. If everything is ready, stage
 > only this brick's new folder and its two registration lines, make a concise
 > commit, push my current GitHub-username branch, and open a pull request into
@@ -49,7 +51,7 @@ When the brick looks right, ask Cline to ship it. Paste this:
 Stop there. A facilitator will merge the pull request. When they say the wall
 has your card, paste this into Cline:
 
-> Follow the post-merge step in the **Friday Git loop for agents** in
+> Follow the post-merge step in the **Wednesday Git loop for agents** in
 > `AGENTS.md`. The pull request has been merged. Pull the latest `main` into my
 > current GitHub-username branch, then push the current branch so its remote is
 > also up to date. Do not create or switch branches. Finish by confirming the
@@ -67,11 +69,10 @@ If you already live in a terminal, `claude` uses the same key. Run `/status` and
 
 ### Which model
 
-Stay on the cheapest model that can do the job. The shared key is the room's budget.
+The room uses two models. Both cost the same and both can read images, so you can attach a screenshot or sketch with either one. The shared key is the room's budget, so keep chats short (see below).
 
-- **deepseek/deepseek-v4-pro-0813** — start here. Fast and cheap. It **cannot read images**, so do not attach a screenshot or sketch while this is selected.
-- **anthropic/claude-sonnet-5** — switch here if DeepSeek is stuck, or if you need the model to look at an image.
-- **openai/gpt-5.6-sol** — much more expensive. Use only after the other two have failed, then switch back.
+- **anthropic/claude-sonnet-5.5** — start here. It is also the model behind the app's own `/api/claude` route.
+- **openai/gpt-6.1-sol** — switch here if Sonnet keeps going in circles on the same problem. A second model often gets unstuck where the first one did not. Start a new chat when you switch.
 
 ### Start a new chat
 

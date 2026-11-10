@@ -1,0 +1,88 @@
+{
+  // Keep this image aligned with .nvmrc and the CI workflow.
+  "name": "AI Coding Workshop",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+
+  "features": {
+    // Installs the Claude Code CLI for intermediate/advanced attendees.
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+  },
+
+  // GitHub shows this field on Code > Codespaces > New with options.
+  // A value is recommended, but GitHub does not make it mandatory, so the
+  // welcome script also catches missing or malformed keys.
+  "secrets": {
+    "OPENROUTER_API_KEY": {
+      "description": "Paste your OpenRouter workshop key. It starts with sk-or-. Cline and Claude Code will both use this one key.",
+      "documentationUrl": "https://openrouter.ai/settings/keys"
+    }
+  },
+
+  "containerEnv": {
+    // OpenRouter's Anthropic-compatible endpoint for Claude Code.
+    "ANTHROPIC_BASE_URL": "https://openrouter.ai/api",
+    // Keep this explicitly blank so Claude cannot silently bypass OpenRouter.
+    "ANTHROPIC_API_KEY": "",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "anthropic/claude-sonnet-5.5",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "anthropic/claude-haiku-5.5",
+    "CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY": "1",
+    "DISABLE_AUTOUPDATER": "1",
+    "NEXT_TELEMETRY_DISABLED": "1"
+  },
+
+  // Make the OpenRouter credential visible to VS Code extensions as well as
+  // terminals. setup-user.sh also adds a shell-profile fallback.
+  "remoteEnv": {
+    "ANTHROPIC_AUTH_TOKEN": "${containerEnv:OPENROUTER_API_KEY}"
+  },
+
+  // GitHub includes updateContentCommand in prebuild snapshots. This is where
+  // the slow npm work belongs so attendees do not all download at once.
+  "updateContentCommand": "bash .devcontainer/on-create.sh",
+
+  // User-level Codespaces secrets are only available after a codespace exists.
+  "postCreateCommand": "bash .devcontainer/setup-user.sh",
+  "postStartCommand": "bash .devcontainer/start-app.sh",
+  "postAttachCommand": "bash .devcontainer/welcome.sh",
+  "waitFor": "updateContentCommand",
+
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Workshop app",
+      "onAutoForward": "openBrowserOnce"
+    }
+  },
+  "otherPortsAttributes": {
+    "onAutoForward": "ignore"
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // Cline (marketplace id is still saoudrizwan.claude-dev). OpenRouter
+        // BYOK and auto-approve are seeded by setup-cline.mjs, not this list.
+        "saoudrizwan.claude-dev",
+        "anthropic.claude-code",
+        "dbaeumer.vscode-eslint",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode"
+      ],
+      "settings": {
+        // Explicitly undo the broad AI-feature switch from an earlier broken
+        // workshop revision; it can persist in an existing Codespace.
+        "chat.disableAIFeatures": false,
+        "editor.formatOnSave": false,
+        "files.eol": "\n",
+        "terminal.integrated.inheritEnv": true,
+        "workbench.startupEditor": "readme"
+      }
+    }
+  },
+
+  // Claude Code will not allow its optional bypass-permissions mode as root.
+  "remoteUser": "node",
+  "hostRequirements": {
+    "cpus": 2
+  }
+}
