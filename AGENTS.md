@@ -93,7 +93,7 @@ contract and stay plain.
 
 **Wednesday git (the whole room shares this repo):**
 
-- Your branch is your **GitHub username**, all day. Do not make a branch per brick.
+- Your branch is your **GitHub username** for the whole workshop. Do not make a branch per brick.
 - Each PR adds **one new folder** (plus two lines in that baseplate's
   `bricks/bricks.js`). Facilitators merge. You never press Merge.
 - After a merge is announced: commit your work, then `git pull origin main`.
@@ -181,8 +181,8 @@ for it. ("Project" survives only in its architectural sense: `lib/projectData.js
 and `sample-data/project.json` describe a *building*.)
 
 Read this file before changing anything. The contract for a given surface is
-at the top of that baseplate's `bricks/bricks.js`. On Wednesday morning the only
-surface in the tree is `flat`; more appear in the nav after facilitators merge
-a phase. Do not add a baseplate — snap a brick onto one that exists.
+at the top of that baseplate's `bricks/bricks.js`. At the start of the workshop the only
+surface in the tree is `flat`; Sketchpad appears in the nav after facilitators merge
+the iterate phase. Do not add a baseplate — snap a brick onto one that exists.
 `baseplates/flat/bricks/bricks.js` is the one to copy first.
 

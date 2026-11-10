@@ -1,6 +1,6 @@
 # Collaborative Vibe Coding for AEC
 
-AEC Tech NYC · Wednesday, November 11 · Verizon Education Center, Cornell Tech
+AEC Tech NYC · Wednesday, November 11, 2:00–5:00 pm · Verizon Education Center, Cornell Tech
 
 One shared repo. One branch (your GitHub username). One new folder per pull request. Two facilitators merge — **you never press Merge**.
 
@@ -9,7 +9,7 @@ One shared repo. One branch (your GitHub username). One new folder per pull requ
 ## 1 · Create your branch
 
 1. Ideally use a **personal** GitHub account (a work SSO may cause issues).
-2. Create a new git branch named after your GitHub username. Stay on this branch all day.
+2. Create a new git branch named after your GitHub username. Stay on this branch for the whole workshop.
 3. Open **Code → Codespaces → New with options**. Do not use the green button or plus button.
 4. Paste the `sk-or-` key from a facilitator into `OPENROUTER_API_KEY`.
 5. Create the Codespace. The first boot takes a few minutes — that is expected.
@@ -26,7 +26,7 @@ One shared repo. One branch (your GitHub username). One new folder per pull requ
 2. A brick's folder and its `id` end in **your two initials** (`nametag-LG`). Starter examples end in `-XX`.
 3. After a facilitator merges (yours, a neighbor's, or a phase unlock): save, commit, then `git pull origin main`. If git asks, **keep both**.
 
-The nav will grow during the day. That is us unlocking surfaces, not you missing a step.
+Partway through, a second surface (**Sketchpad**) will appear in the nav. That is us unlocking it, not you missing a step.
 
 ## 4 · Your first brick — a nametag
 
@@ -71,7 +71,7 @@ If you already live in a terminal, `claude` uses the same key. Run `/status` and
 
 The room uses two models. Both cost the same and both can read images, so you can attach a screenshot or sketch with either one. The shared key is the room's budget, so keep chats short (see below).
 
-- **anthropic/claude-sonnet-5.5** — start here. It is also the model behind the app's own `/api/claude` route.
+- **anthropic/claude-sonnet-5.5** — start here.
 - **openai/gpt-6.1-sol** — switch here if Sonnet keeps going in circles on the same problem. A second model often gets unstuck where the first one did not. Start a new chat when you switch.
 
 ### Start a new chat

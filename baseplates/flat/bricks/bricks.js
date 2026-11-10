@@ -53,7 +53,7 @@
  * ---------------------------------------------------------------------------
  * NAMING — folder and id end in your two initials
  * ---------------------------------------------------------------------------
- *   branch   <your GitHub username>     all day. Do not make a new branch.
+ *   branch   <your GitHub username>     the whole workshop. Do not make a new branch.
  *   folder   bricks/unit-converter-LG/
  *   id       "unit-converter-LG"
  *   PR       that folder + two lines in this file. Facilitators merge.
