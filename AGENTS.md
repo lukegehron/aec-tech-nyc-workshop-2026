@@ -182,7 +182,7 @@ and `sample-data/project.json` describe a *building*.)
 
 Read this file before changing anything. The contract for a given surface is
 at the top of that baseplate's `bricks/bricks.js`. At the start of the workshop the only
-surface in the tree is `flat`; Sketchpad appears in the nav after facilitators merge
+surface in the tree is `flat`; Sketchpad and the 3D Viewer appear in the nav after facilitators merge
 the iterate phase. Do not add a baseplate — snap a brick onto one that exists.
 `baseplates/flat/bricks/bricks.js` is the one to copy first.
 

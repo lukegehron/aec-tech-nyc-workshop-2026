@@ -26,7 +26,7 @@ One shared repo. One branch (your GitHub username). One new folder per pull requ
 2. A brick's folder and its `id` end in **your two initials** (`nametag-LG`). Starter examples end in `-XX`.
 3. After a facilitator merges (yours, a neighbor's, or a phase unlock): save, commit, then `git pull origin main`. If git asks, **keep both**.
 
-Partway through, a second surface (**Sketchpad**) will appear in the nav. That is us unlocking it, not you missing a step.
+After the break, two new surfaces appear in the nav: **Sketchpad** (draw) and the **3D Viewer** (orbit a building). That is us unlocking them, not you missing a step.
 
 ## 4 · Your first brick — a nametag
 
@@ -77,3 +77,7 @@ The room uses two models. Both cost the same and both can read images, so you ca
 ### Start a new chat
 
 Each turn resends the whole thread, so a long chat costs more than a short one — even if you are only asking a small follow-up. Start a **new Cline chat** when you begin a new brick, after you ship, or when the agent is looping. Do not keep the nametag thread going into the next task.
+
+## 6 · Take it with you
+
+The [survival kit](SURVIVAL-KIT.md) has the phrasebook, the prompts for a project you have never seen, and what to do when you are stuck. Hacking this weekend? It is not too late to [sign up for Saturday's hackathon](https://www.aectech.us/nyc-hackathon).
