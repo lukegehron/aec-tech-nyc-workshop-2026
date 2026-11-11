@@ -105,6 +105,7 @@ import { empireStateEL } from "./empire-state-EL";
 import { clashDetectBrick } from "./clash-detect-ME";
 import { curtainWallKR } from "./curtain-wall-KR";
 import { switchbackStairKR } from "./switchback-stair-KR";
+import { wallpaperBrick } from "./wallpaper-JD";
 import { streetViewME } from "./street-view-ME";
 
 export const bricks = [
@@ -123,6 +124,7 @@ export const bricks = [
   clashDetectBrick,
   curtainWallKR,
   switchbackStairKR,
+  wallpaperBrick,
   streetViewME,
 ];
 

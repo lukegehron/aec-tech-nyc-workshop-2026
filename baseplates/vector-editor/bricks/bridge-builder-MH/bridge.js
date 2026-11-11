@@ -18,6 +18,7 @@ export const BRIDGE_TYPES = [
 ];
 
 export const DEFAULT_SETTINGS = {
+  piece: "member", // what the Member tool places
   type: "pratt",
   bayGrid: 2, // bay width, in grid squares
   heightGrid: 3, // truss depth / arch rise / tower height, in grid squares
@@ -26,6 +27,74 @@ export const DEFAULT_SETTINGS = {
 };
 
 export const MIN_BAYS = 2;
+
+/** What the Member tool can place. `width` multiplies the current stroke width. */
+export const PIECES = [
+  { value: "member", label: "Member", width: 0.75 },
+  { value: "deck", label: "Deck", width: 1.8 },
+  { value: "cable", label: "Cable", width: 0.4 },
+  { value: "support", label: "Pin support", width: 0.5 },
+];
+
+export const pieceWidth = (kind) => PIECES.find((p) => p.value === kind)?.width ?? 0.75;
+
+const LINE_KINDS = new Set(["member", "deck", "cable"]);
+
+/** The two ends of a member, deck or cable piece: the joints other pieces snap to. */
+export function pieceEnds(element) {
+  if (!LINE_KINDS.has(element?.bridge) || element.hidden) return null;
+  const commands = element.subPaths?.[0] ?? [];
+  const first = commands[0]?.p;
+  const last = commands[commands.length - 1]?.p;
+  return first && last && commands.length > 1 ? [first, last] : null;
+}
+
+export const samePoint = (a, b, eps = 0.5) =>
+  Math.abs(a.x - b.x) < eps && Math.abs(a.y - b.y) < eps;
+
+export function uniquePoints(points) {
+  const out = [];
+  for (const p of points) if (!out.some((q) => samePoint(p, q))) out.push(p);
+  return out;
+}
+
+/** Every joint on the sheet: the unique end points of all bridge pieces. */
+export function collectJoints(elements) {
+  return uniquePoints(elements.flatMap((element) => pieceEnds(element) ?? []));
+}
+
+export function nearestJoint(point, joints, radius) {
+  let best = null;
+  let bestDistance = radius;
+  for (const joint of joints) {
+    const d = Math.hypot(joint.x - point.x, joint.y - point.y);
+    if (d <= bestDistance) {
+      best = joint;
+      bestDistance = d;
+    }
+  }
+  return best;
+}
+
+/** Lock a member to 0° / 45° / 90° from its start, keeping its length. */
+export function constrain45(from, to) {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const length = Math.hypot(dx, dy);
+  if (!length) return to;
+  const step = Math.PI / 4;
+  const angle = Math.round(Math.atan2(dy, dx) / step) * step;
+  return { x: from.x + Math.cos(angle) * length, y: from.y + Math.sin(angle) * length };
+}
+
+/** A pin support: a triangle hanging under `p`, half a grid square each side. */
+export function supportTriangle(p, grid) {
+  return [
+    { x: p.x, y: p.y },
+    { x: p.x + grid / 2, y: p.y + grid },
+    { x: p.x - grid / 2, y: p.y + grid },
+  ];
+}
 
 const P = (x, y) => ({ x, y });
 const snapTo = (value, step) => Math.round(value / step) * step;
@@ -139,6 +208,7 @@ export function buildBridge(layout, settings, grid) {
       nodes.push(top);
     }
     nodes.push(P(x0, towerTop), P(x1, towerTop), anchorL, anchorR);
+    nodes.push(P(x0, y0 + grid), P(x1, y0 + grid)); // tower bases
   }
 
   // Pin supports: a triangle under each abutment, half a grid square each side.
