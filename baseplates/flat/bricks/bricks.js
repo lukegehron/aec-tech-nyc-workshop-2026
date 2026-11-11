@@ -99,6 +99,7 @@ import { badgeEL } from "./badge-EL";
 import { posterHS } from "./poster-HS";
 import { magicCardDY } from "./magic-card-DY";
 import { ttyAS } from "./tty-AS";
+import { prBadgeJD } from "./pr-badge-JD";
 
 export const bricks = [
   notesBrick,
@@ -122,6 +123,7 @@ export const bricks = [
   posterHS,
   magicCardDY,
   ttyAS,
+  prBadgeJD,
 ];
 
 export const cardsByOrder = bricks
