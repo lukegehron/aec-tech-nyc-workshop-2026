@@ -105,6 +105,7 @@ import { surveyJA } from "./survey-JA";
 import { ticketRE } from "./ticket-RE";
 import { xlsStickerME } from "./xls-sticker-ME";
 import { aiSummarizerBrick } from "./ai-summarizer-LG";
+import { sharedSpaceDY } from "./shared-space-DY";
 
 export const bricks = [
   notesBrick,
@@ -134,6 +135,7 @@ export const bricks = [
   ticketRE,
   xlsStickerME,
   aiSummarizerBrick,
+  sharedSpaceDY,
 ];
 
 export const cardsByOrder = bricks
