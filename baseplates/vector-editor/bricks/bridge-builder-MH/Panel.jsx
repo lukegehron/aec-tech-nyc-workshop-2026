@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { activeToolIdAtom, docAtom, elementsAtom, setToolAtom } from "../../atoms";
 import { formatLength } from "../../model";
 import { bridgeSettingsAtom } from "./atoms";
-import { BRIDGE_TYPES, PIECES, bayGridFor, collectJoints } from "./bridge";
+import { BRIDGE_TYPES, PIECES, applyPick, bayGridFor, collectJoints, typeLabel } from "./bridge";
 
 /** The Bridge tab: enter bridge mode, pick the piece to place, and set up preset bridges. */
 export default function BridgePanel() {
@@ -20,7 +20,7 @@ export default function BridgePanel() {
   const activeToolId = useAtomValue(activeToolIdAtom);
   const setTool = useSetAtom(setToolAtom);
   const patch = (next) => setOpts({ ...opts, ...next });
-  const inMode = activeToolId === "member" || activeToolId === "bridge";
+  const inMode = activeToolId === "bridge";
   const count = (kind) => elements.filter((element) => element.bridge === kind).length;
   const bayMm = doc.grid * bayGridFor(opts) * doc.mmPerUnit;
   const heightMm = doc.grid * opts.heightGrid * doc.mmPerUnit;
@@ -31,13 +31,13 @@ export default function BridgePanel() {
         <Button
           size="sm"
           variant={inMode ? "outline" : "default"}
-          onClick={() => setTool(inMode ? "select" : "member")}
+          onClick={() => setTool(inMode ? "select" : "bridge")}
         >
-          {inMode ? "Exit bridge mode (Esc)" : "Start building (M)"}
+          {inMode ? "Exit bridge mode (Esc)" : "Build a bridge (G)"}
         </Button>
         <p className="text-xs text-muted-foreground">
-          In bridge mode the canvas turns yellow and the other tools are greyed out. Drag from
-          joint to joint to add a piece. Ends snap to existing joints, then to the grid.
+          One button starts it. The canvas turns yellow, the other tools grey out, and a piece
+          palette appears on the canvas. Drag from joint to joint to add a piece.
         </p>
       </div>
 
@@ -51,8 +51,8 @@ export default function BridgePanel() {
               variant={opts.piece === piece.value ? "secondary" : "outline"}
               aria-pressed={opts.piece === piece.value}
               onClick={() => {
-                patch({ piece: piece.value });
-                setTool("member");
+                setOpts(applyPick(piece.value, opts));
+                setTool("bridge");
               }}
             >
               {`${i + 1} · ${piece.label}`}
@@ -67,8 +67,7 @@ export default function BridgePanel() {
       <Separator />
 
       <p className="text-xs text-muted-foreground">
-        Or drop a whole preset with the Bridge tool (G). It arrives as separate pieces you can
-        delete or add to.
+        {`Whole bridge drops a ${typeLabel(opts.type).toLowerCase()} as separate pieces you can delete or add to. These settings shape it.`}
       </p>
 
       <div className="flex flex-col gap-2">
