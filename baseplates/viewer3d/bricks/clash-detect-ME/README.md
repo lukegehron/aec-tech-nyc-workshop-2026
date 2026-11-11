@@ -26,21 +26,54 @@ a model or switching view mode.
 
 The test walks the **live three.js scene graph** rather than rebuilding boxes
 from `project.json`. That is what makes it a *model* clash test rather than a
-data report: it sees whichever view mode is active, and it sees imported `.3dm`
-geometry from the Rhino brick, without either of them opting in and without this
-brick knowing they exist. Bricks don't import each other — they meet in the
-scene.
+data report: it sees whichever view mode is active, it sees imported `.3dm`
+geometry from the Rhino brick, and it sees **walls, doors and windows drawn with
+the Walls tool** — without any of them opting in and without this brick knowing
+they exist. Bricks don't import each other; they meet in the scene.
 
 Anything can opt out by setting `userData.clashIgnore` on itself or an ancestor,
 which is how this brick's own markers avoid being tested as geometry.
 
+## Drawn walls, doors and windows
+
+Walls are tested the moment they exist, and the test **re-runs automatically**
+when you draw one, place an opening, or hit Undo in the Walls tool. It does that
+by fingerprinting the scene's geometry a few times a second (`sceneSignature`)
+rather than subscribing to the other brick's state — which would mean importing
+it. Press **Re-run** to force a retest regardless.
+
+Two things were needed to make drawn geometry report correctly:
+
+**1. Each wall is its own element.** Two meshes of the same element never clash,
+which is right — a window sill genuinely overlaps the wall pier it sits in, and
+flagging that would bury every real result. But the wall tool nests every wall
+under one group, so treating "the brick's root group" as the element made two
+separate walls look like one object and reported **nothing**. An element is now
+the nearest ancestor carrying `userData.clashElement` or `userData.wallId`,
+falling back to the top-level object. The wall tool tags every mesh it builds
+with `wallId`, so each wall is its own element and its own openings are still
+correctly excluded. Any brick can opt into the same treatment with either tag.
+
+**2. Oriented boxes, not just axis-aligned ones.** Walls are drawn at any angle,
+and an angled box has a huge axis-aligned bounding box — a 6 m wall at 45°
+covers **19.22 m² of plan instead of 1.20 m²**, a 16× over-report, so it would
+clash with everything in that square. The AABB is now only the cheap broad
+phase; a Separating Axis Theorem test on the **oriented** boxes confirms or
+rejects each candidate.
+
 ## Known limits — worth saying out loud
 
-- **Axis-aligned bounding boxes, not triangle-level intersection.** Every solid
-  this baseplate builds is an axis-aligned box, so for the building itself the
-  AABB *is* the geometry and the result is exact. For a **rotated imported
-  mesh** the AABB is conservative and can over-report. Triangle-level testing is
-  a `three-mesh-bvh` job, well past what one brick should carry.
+- **Box-level, not triangle-level.** Solids are tested as oriented boxes, so
+  anything genuinely box-shaped — every massing/floor/space box, every wall
+  segment, every door and window — is **exact**, at any angle. A non-boxy
+  imported mesh (an L-shaped or curved solid) is still approximated by its
+  oriented box and can over-report. Triangle-level testing is a
+  `three-mesh-bvh` job, well past what one brick should carry.
+- **Reported depth for a hard clash is the thickness of the overlap**, capped at
+  the thinnest dimension the two solids share. SAT's raw answer is the minimum
+  translation distance, which for two crossing 3 m walls is 3 m — technically
+  how far you'd move one to free it, but it reads as nonsense next to a 0.2 m
+  wall.
 - Solids that merely **touch** are not a clash — floor slabs are built with a
   deliberate `SLAB_GAP` and rooms with a `PLAN_INSET`, and flagging every
   neighbouring surface would make the report useless.
@@ -50,9 +83,10 @@ which is how this brick's own markers avoid being tested as geometry.
   underneath everything would clash with the whole model and tell you nothing.
 
 Out of the box the sample building is **clear** in hard mode: the floor and space
-modes are authored not to overlap. Switch to **Clearance** at ~0.3 m to see it
-flag the deliberate slab gaps, or import a `.3dm` that lands inside the massing
-to see real hard clashes.
+modes are authored not to overlap. The quickest way to see it fire is the
+**Walls** tool — turn both on, draw two walls that cross, and the crossing is
+flagged immediately. Otherwise switch to **Clearance** at ~0.3 m to see it flag
+the deliberate slab gaps, or import a `.3dm` that lands inside the massing.
 
 ## Files
 

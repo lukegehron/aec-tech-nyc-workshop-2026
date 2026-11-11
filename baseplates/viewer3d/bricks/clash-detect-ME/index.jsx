@@ -1,13 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useStore } from "@react-three/fiber";
+import { useFrame, useStore } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import { ChevronLeft, ChevronRight, ScanSearch, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { collectSolids, findClashes, MAX_CANDIDATES } from "./clash";
+import {
+  collectSolids,
+  findClashes,
+  MAX_CANDIDATES,
+  sceneSignature,
+} from "./clash";
 import {
   clashActiveAtom,
   clashBusyAtom,
@@ -48,9 +53,21 @@ import {
 // markers as geometry. `clashIgnore` is what `collectSolids` looks for.
 const IGNORE = { clashIgnore: true };
 
-function labelFor(object) {
+/**
+ * A readable name for one side of a clash.
+ *
+ * The wall tool tags every mesh it builds with `userData.wallId` and gives its
+ * openings a `door-`/`window-` id prefix, so a clash against drawn geometry can
+ * say "door" rather than "Mesh". Nothing here is coupled to that brick — it
+ * reads tags off the scene graph, and any brick that sets the same tags gets
+ * the same treatment.
+ */
+function labelFor(object, elementId) {
+  const tag = String(elementId ?? "");
+  if (tag.startsWith("door")) return "door";
+  if (tag.startsWith("window")) return "window";
+  if (tag.startsWith("wall")) return "wall";
   if (!object) return "solid";
-  // r3f doesn't name meshes, so fall back to something readable.
   return object.name || object.userData?.title || object.type || "solid";
 }
 
@@ -63,6 +80,38 @@ function ClashScene({ palette }) {
   const [results, setResults] = useAtom(clashResultsAtom);
   const [focus, setFocus] = useAtom(clashFocusAtom);
   const setBusy = useSetAtom(clashBusyAtom);
+
+  // Bumped whenever the scene's geometry changes, which re-runs the effect
+  // below. This is how drawing a wall, placing a door or hitting Undo in
+  // ANOTHER brick retests automatically, without this brick importing that
+  // brick's atoms.
+  const [autoToken, setAutoToken] = useState(0);
+  const signatureRef = useRef(null);
+  const frameRef = useRef(0);
+
+  useFrame(({ scene }) => {
+    if (!active) return;
+    // Every 20th frame is often enough to feel instant and cheap enough not to
+    // matter — the fingerprint walk is O(meshes), the clash test is not.
+    frameRef.current += 1;
+    if (frameRef.current % 20 !== 0) return;
+
+    const signature = sceneSignature(scene);
+    if (signatureRef.current === null) {
+      signatureRef.current = signature;
+      return;
+    }
+    if (signature !== signatureRef.current) {
+      signatureRef.current = signature;
+      setAutoToken((token) => token + 1);
+    }
+  });
+
+  // Forget the fingerprint when the tool is disarmed, so re-arming always
+  // takes a fresh baseline rather than comparing against a stale scene.
+  useEffect(() => {
+    if (!active) signatureRef.current = null;
+  }, [active]);
 
   // The test runs in an effect, not during render: it walks the scene graph,
   // which is r3f's mutable state, and it writes atoms. `useStore()` rather than
@@ -99,17 +148,34 @@ function ClashScene({ palette }) {
           size: clash.size,
           depth: clash.depth,
           kind: clash.kind,
-          a: labelFor(clash.aElement ?? clash.a),
-          b: labelFor(clash.bElement ?? clash.b),
+          a: labelFor(clash.aElement ?? clash.a, clash.aElementId),
+          b: labelFor(clash.bElement ?? clash.b, clash.bElementId),
         }))
       );
-      setFocus(found.length ? 0 : null);
+      // Keep the user's place in the list across an auto-rerun — drawing a
+      // wall shouldn't throw them back to clash #1 — but clamp it so it can
+      // never point past the end of a shorter list.
+      setFocus((current) => {
+        if (found.length === 0) return null;
+        if (current == null) return 0;
+        return Math.min(current, found.length - 1);
+      });
       setBusy(false);
       invalidate();
     });
 
     return () => cancelAnimationFrame(id);
-  }, [store, active, mode, tolerance, runToken, setResults, setFocus, setBusy]);
+  }, [
+    store,
+    active,
+    mode,
+    tolerance,
+    runToken,
+    autoToken,
+    setResults,
+    setFocus,
+    setBusy,
+  ]);
 
   if (!active) return null;
 
