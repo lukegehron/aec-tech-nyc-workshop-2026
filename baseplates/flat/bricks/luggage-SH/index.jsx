@@ -12,7 +12,7 @@ const person = {
   seat: "Architect",
   toolkit: "Excel · Revit · ChatGPT · Claude",
   sticker: "🏢",
-  initials: "SE",
+  initials: "SH",
   photo: "https://github.com/ummm-right.png",
 };
 
@@ -101,8 +101,8 @@ function LuggageCard({ expanded }) {
   );
 }
 
-export const luggageSE = {
-  id: "luggage-SE",
+export const luggageSH = {
+  id: "luggage-SH",
   label: "Luggage tag",
   cards: [
     {
