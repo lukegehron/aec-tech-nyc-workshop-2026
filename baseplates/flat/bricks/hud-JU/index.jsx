@@ -15,10 +15,10 @@ const PERSON = {
 
 function Portrait({ size }) {
   const [failed, setFailed] = useState(false);
-  const box = `flex shrink-0 items-center justify-center overflow-hidden border border-green-500/60 bg-black ${size}`;
+  const box = `flex shrink-0 items-center justify-center overflow-hidden border border-[color:var(--ju-fg)] bg-[color:var(--ju-bg)] ${size}`;
   if (failed) {
     return (
-      <div className={`${box} font-mono font-bold text-green-400`}>
+      <div className={`${box} font-mono font-bold text-[color:var(--ju-fg)]`}>
         {PERSON.initials}
       </div>
     );
@@ -36,62 +36,87 @@ function Portrait({ size }) {
   );
 }
 
+function Role({ label, children, big }) {
+  return (
+    <div className="flex flex-col items-center gap-1 text-center">
+      <p className="text-[10px] uppercase tracking-[0.4em] text-[color:var(--ju-fg)]">{label}</p>
+      <p className={`text-[color:var(--ju-fg)] ${big ? "text-xl" : ""}`}>{children}</p>
+    </div>
+  );
+}
+
 function HudCard({ expanded }) {
   return (
     <div
-      className={`flex h-full flex-col gap-3 rounded-sm border border-green-500/40 bg-[#050805] p-3 font-mono text-green-400 shadow-[inset_0_0_24px_rgba(34,197,94,0.12)] ${
+      className={`relative h-full min-h-[300px] overflow-hidden rounded-sm border border-[color:var(--ju-fg)] bg-[color:var(--ju-bg)] font-mono text-[color:var(--ju-fg)] transition-colors duration-500 hudJU-card ${
         expanded ? "text-base" : "text-xs"
       }`}
+      style={{ containerType: "size" }}
     >
-      <style>{`@keyframes hudJUBlink{0%,49%{opacity:1}50%,100%{opacity:0}}`}</style>
+      <style>{`
+        .hudJU-card{--ju-bg:#bc002d;--ju-fg:#ffffff;--ju-shadow:rgba(0,0,0,0.9)}
+        .hudJU-card:hover{--ju-bg:#ffffff;--ju-fg:#bc002d;--ju-shadow:rgba(255,255,255,0.95)}
+        @keyframes hudJURoll{from{transform:translateY(0)}to{transform:translateY(calc(-100% - 100cqh))}}
+        @keyframes hudJUBlink{0%,49%{opacity:1}50%,100%{opacity:0}}
+        .hudJU-roll{animation:hudJURoll 24s linear infinite}
+        @media (prefers-reduced-motion: reduce){.hudJU-roll{animation:none;position:static!important}}
+      `}</style>
 
-      <div className="flex items-center justify-between text-[10px] uppercase tracking-widest text-green-600">
-        <span>● monitor // operator</span>
-        <span>{PERSON.sticker}</span>
-      </div>
+      <svg
+        aria-hidden
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        viewBox="0 0 400 300"
+        preserveAspectRatio="xMidYMax slice"
+      >
+        <rect width="400" height="300" style={{ fill: "var(--ju-bg)", transition: "fill 0.5s" }} />
+        <circle cx="200" cy="120" r="62" style={{ fill: "var(--ju-fg)", transition: "fill 0.5s" }} />
+        <g fill="none" style={{ stroke: "var(--ju-fg)", transition: "stroke 0.5s" }} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M40 235 L170 130 L188 114 H212 L230 130 L360 235" />
+          <path d="M170 130 L182 138 L192 126 L202 140 L212 126 L220 138 L230 130" />
+          <path d="M20 235 H380" />
+        </g>
+        <path d="M70 250 H330 M110 264 H290 M150 278 H250" style={{ stroke: "var(--ju-fg)", transition: "stroke 0.5s" }} strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
+      </svg>
 
-      <div className="flex items-center gap-3">
-        <Portrait size={expanded ? "h-20 w-20 text-2xl" : "h-12 w-12 text-base"} />
-        <div className="min-w-0">
-          <p
-            className={`truncate font-bold text-green-400 ${
-              expanded ? "text-4xl" : "text-2xl"
-            }`}
-          >
-            {PERSON.name}
-            <span
-              aria-hidden
-              className="ml-1 inline-block h-[1em] w-[0.5em] translate-y-[0.15em] bg-green-400"
-              style={{ animation: "hudJUBlink 1s steps(1) infinite" }}
-            />
-          </p>
-          <p className="truncate text-green-300/80">{PERSON.github}</p>
-        </div>
-      </div>
-
-      <div className="border-y border-green-500/30 py-1 text-green-300">
-        <span className="text-green-600">STATUS</span> {PERSON.title}{" "}
-        <span className="text-green-600">| SEAT</span> {PERSON.seat}
-      </div>
-
-      <div className="flex flex-col gap-0.5">
-        <p className="flex gap-3 text-[10px] uppercase tracking-widest text-green-600">
-          <span className="w-8">PID</span>
-          <span className="flex-1">PROCESS</span>
-          <span>STAT</span>
+      <div className="hudJU-roll absolute inset-x-0 flex flex-col items-center gap-8 px-4 pb-8" style={{ top: "100%", textShadow: "0 1px 4px var(--ju-shadow), 0 0 2px var(--ju-shadow)" }}>
+        <p className="text-[10px] uppercase tracking-[0.5em] text-[color:var(--ju-fg)]">
+          a film by
         </p>
-        {PERSON.toolkit.map((tool, i) => (
-          <p key={tool} className="flex gap-3 tabular-nums">
-            <span className="w-8 text-green-700">{1001 + i}</span>
-            <span className="flex-1 truncate">{tool.toLowerCase()}</span>
-            <span className="text-green-300">running</span>
+
+        <Portrait size={expanded ? "h-28 w-28 text-3xl" : "h-20 w-20 text-xl"} />
+
+        <p className={`font-bold tracking-[0.3em] text-[color:var(--ju-fg)] ${expanded ? "text-5xl" : "text-3xl"}`}>
+          {PERSON.name.toUpperCase()}
+          <span
+            aria-hidden
+            className="ml-1 inline-block h-[1em] w-[0.5em] translate-y-[0.15em] bg-[color:var(--ju-fg)]"
+            style={{ animation: "hudJUBlink 1s steps(1) infinite" }}
+          />
+        </p>
+
+        <Role label="starring" big>{PERSON.title}</Role>
+        <Role label="seat">{PERSON.seat}</Role>
+        <Role label="github">{PERSON.github}</Role>
+
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-[10px] uppercase tracking-[0.4em] text-[color:var(--ju-fg)]">
+            featuring
           </p>
-        ))}
+          {PERSON.toolkit.map((tool) => (
+            <p key={tool} className="tracking-[0.2em] text-[color:var(--ju-fg)]">
+              {tool.toUpperCase()}
+            </p>
+          ))}
+        </div>
+
+        <p className="text-4xl">{PERSON.sticker}</p>
+        <p className="text-[10px] uppercase tracking-[0.4em] text-[color:var(--ju-fg)]">
+          no agents were harmed
+        </p>
       </div>
 
-      <p className="mt-auto text-green-600">
-        $ <span className="text-green-400">whoami</span> → {PERSON.name}
-      </p>
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-[color:var(--ju-bg)] to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[color:var(--ju-bg)] to-transparent" />
     </div>
   );
 }
