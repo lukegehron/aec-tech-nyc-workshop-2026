@@ -68,13 +68,14 @@ import { penBrush } from "./pen-XX";
 import { sprayBrush } from "./spray-XX";
 import { calligraphyBrush } from "./calligraphy-XX";
 import { mirrorBrush } from "./mirror-XX";
+import { smileStampNI } from "./smile-stamp-NI";
 import { sketchTo3dBrick } from "./sketch-to-3d-LG";
 import { wetInkBrush } from "./wet-ink-PU";
 import { snapBrush } from "./snap-AT";
 import { watercolorBrush } from "./watercolor-AC";
 import { gridBackground, dotsBackground, isometricBackground, paperBackground } from "./backgrounds-JL";
 
-export const bricks = [penBrush, sprayBrush, calligraphyBrush, mirrorBrush, sketchTo3dBrick, wetInkBrush, snapBrush, watercolorBrush, gridBackground, dotsBackground, isometricBackground, paperBackground];
+export const bricks = [penBrush, sprayBrush, calligraphyBrush, mirrorBrush, sketchTo3dBrick, wetInkBrush, snapBrush, watercolorBrush, gridBackground, dotsBackground, isometricBackground, paperBackground, smileStampNI];
 
 function shownBricks(hiddenSet) {
   const hidden =

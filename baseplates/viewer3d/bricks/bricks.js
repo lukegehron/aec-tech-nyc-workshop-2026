@@ -96,6 +96,7 @@ import { spacesBrick } from "./spaces-XX";
 import { measureBrick } from "./measure-XX";
 import { zSliceBrick } from "./z-slice-XX";
 import { rhinoImportBrick } from "./rhino-import-XX";
+import { explodeNI } from "./explode-NI";
 import { dontClickBrick } from "./dont-click-RH";
 import { ltlRenderBrick } from "./ltl-render-CD";
 import { spaceshipBrick } from "./spaceship-KC";
@@ -111,6 +112,7 @@ export const bricks = [
   measureBrick,
   zSliceBrick,
   rhinoImportBrick,
+  explodeNI,
   dontClickBrick,
   ltlRenderBrick,
   spaceshipBrick,
