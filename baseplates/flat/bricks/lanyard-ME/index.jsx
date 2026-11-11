@@ -1,8 +1,7 @@
 "use client";
 
-// Weekend-pass lanyard: an Arizona-sunset, holographic conference badge on a swinging
-// strap with a hole punch. Avatar, name, title, barcode.
-// Toolkit chips and check-in sit on the front. State survives reload via useCardState.
+// Holographic ID: a futuristic iridescent ID card with rainbow shimmer,
+// scan lines, clearance level, and cursor-following holographic effects.
 
 import { useState } from "react";
 import { useCardState } from "../../storage";
@@ -16,6 +15,7 @@ const USER = {
   toolkit: "Excel · Revit · Claude · ChatGPT",
   sticker: "💎",
   passNo: "0042",
+  clearance: "ALL-IN",
 };
 
 const STICKERS = ["💎", "🚀", "🏗️", "✨", "🦄", "🔥", "🌊"];
