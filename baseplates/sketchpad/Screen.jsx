@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { useAtomValue } from "jotai";
 import { P5Canvas } from "@p5-wrapper/react";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { KitTray } from "@/lib/KitTray";
 import { hiddenBrickKeysAtom } from "@/lib/bricks";
-import { bricks, getBrush, kitBrushes } from "./bricks/bricks";
+import { bricks, getBrush, kitBrushes, kitPanels } from "./bricks/bricks";
 import { sketch } from "./sketch";
 
 /**
@@ -20,6 +20,9 @@ import { sketch } from "./sketch";
  *
  * Note there is no list of brushes in this file — it loops the registry in
  * `bricks/bricks.js`. Adding a brush means a folder and two lines over there.
+ *
+ * A brick may also contribute a `panels` entry — those render beside the pad
+ * and receive `getSketchDataUrl` so they can send the drawing to a model.
  */
 
 const COLORS = ["#111827", "#ef4444", "#3b82f6", "#22c55e", "#f59e0b"];
@@ -27,12 +30,22 @@ const COLORS = ["#111827", "#ef4444", "#3b82f6", "#22c55e", "#f59e0b"];
 export default function SketchpadScreen() {
   const hidden = useAtomValue(hiddenBrickKeysAtom);
   const brushes = kitBrushes(hidden);
+  const panels = kitPanels(hidden);
+  const canvasWrapRef = useRef(null);
   const [brushId, setBrushId] = useState(brushes[0]?.id);
   const [color, setColor] = useState(COLORS[0]);
   const [weight, setWeight] = useState(4);
   const [clearSignal, setClearSignal] = useState(0);
 
   const brush = getBrush(brushId, hidden);
+
+  const getSketchDataUrl = () => {
+    const canvas = canvasWrapRef.current?.querySelector("canvas:last-of-type");
+    if (!(canvas instanceof HTMLCanvasElement)) {
+      throw new Error("Sketch canvas isn't ready yet.");
+    }
+    return canvas.toDataURL("image/png");
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -73,7 +86,7 @@ export default function SketchpadScreen() {
           <span className="text-xs text-muted-foreground">Size</span>
           <Slider
             value={[weight]}
-            onValueChange={([v]) => setWeight(v)}
+            onValueChange={(v) => setWeight(Array.isArray(v) ? v[0] : v)}
             min={1}
             max={24}
             step={1}
@@ -88,24 +101,37 @@ export default function SketchpadScreen() {
         </Button>
       </div>
 
-      <Card>
-        <CardContent className="flex flex-col items-center gap-2 overflow-auto p-4">
-          <div className="overflow-hidden rounded-md border [&_canvas:not(:last-of-type)]:pointer-events-none [&_canvas:not(:last-of-type)]:hidden">
-            {/* P5Canvas is a lazy component, so it needs a Suspense boundary. */}
-            <Suspense fallback={<div className="p-4 text-sm">Loading canvas…</div>}>
-              <P5Canvas
-                sketch={sketch}
-                brushId={brush.id}
-                color={color}
-                weight={weight}
-                clearSignal={clearSignal}
-              />
-            </Suspense>
-          </div>
-          {/* The active brick describes itself. */}
-          <p className="text-xs text-muted-foreground">{brush.hint}</p>
-        </CardContent>
-      </Card>
+      <div className={panels.length ? "grid items-start gap-4 lg:grid-cols-[auto_minmax(16rem,1fr)]" : undefined}>
+        <Card>
+          <CardContent className="flex flex-col items-center gap-2 overflow-auto p-4">
+            <div
+              ref={canvasWrapRef}
+              className="overflow-hidden rounded-md border [&_canvas:not(:last-of-type)]:pointer-events-none [&_canvas:not(:last-of-type)]:hidden"
+            >
+              {/* P5Canvas is a lazy component, so it needs a Suspense boundary. */}
+              <Suspense fallback={<div className="p-4 text-sm">Loading canvas…</div>}>
+                <P5Canvas
+                  sketch={sketch}
+                  brushId={brush.id}
+                  color={color}
+                  weight={weight}
+                  clearSignal={clearSignal}
+                />
+              </Suspense>
+            </div>
+            {/* The active brick describes itself. */}
+            <p className="text-xs text-muted-foreground">{brush.hint}</p>
+          </CardContent>
+        </Card>
+
+        {panels.map((panel) => (
+          <Card key={panel.id}>
+            <CardContent className="p-4">
+              <panel.Panel getSketchDataUrl={getSketchDataUrl} />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

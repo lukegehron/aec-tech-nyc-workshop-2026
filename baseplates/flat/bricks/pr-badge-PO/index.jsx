@@ -5,6 +5,7 @@
 //   reviewer = seat, green button = merge.
 
 import { useState } from "react";
+import { Cat } from "lucide-react";
 
 const PERSON = {
   name: "Polina",
@@ -25,7 +26,7 @@ function Avatar({ size }) {
   if (failed) {
     return (
       <span
-        className={`${box} flex shrink-0 items-center justify-center rounded-full bg-muted font-semibold text-muted-foreground`}
+        className={`${box} flex shrink-0 items-center justify-center rounded-full border border-[#ff00ff] bg-black font-semibold text-[#ff00ff]`}
       >
         {PERSON.initials}
       </span>
@@ -42,58 +43,25 @@ function Avatar({ size }) {
   );
 }
 
-function PrBadgeCard({ expanded }) {
+function PrBadgeCard() {
   const [merged, setMerged] = useState(false);
 
   return (
-    <div className="flex h-full flex-col gap-3 overflow-auto text-sm">
-      <div className="flex items-start gap-3">
+    <div className="flex h-full flex-col items-center justify-center gap-3 rounded-lg border border-[#ff00ff] bg-black p-3 text-[#ff00ff]">
+      <div className="flex items-center gap-3">
         <Avatar size="lg" />
-        <div className="min-w-0 flex-1">
-          <p
-            className={`font-heading font-semibold leading-tight ${
-              expanded ? "text-2xl" : "text-base"
-            }`}
-          >
-            {PERSON.title}{" "}
-            <span className="font-normal text-muted-foreground">#{PERSON.initials}</span>
-          </p>
-          <p className="text-xs text-muted-foreground">
-            <span className="font-medium text-foreground">{PERSON.name}</span>{" "}
-            wants to merge into <code>main</code> · @{PERSON.github}
-          </p>
-        </div>
+        <Cat className="size-8" aria-label="cat" />
         <span className="text-3xl leading-none" aria-hidden="true">
           {PERSON.sticker}
         </span>
       </div>
-
-      <div>
-        <p className="mb-1 text-xs font-medium text-muted-foreground">
-          Files changed · {PERSON.toolkit.length}
-        </p>
-        <ul className="flex flex-col gap-0.5 font-mono text-xs">
-          {PERSON.toolkit.map((tool) => (
-            <li key={tool} className="flex items-center gap-2">
-              <span className="font-semibold text-green-600">+</span>
-              <span>{tool}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="flex items-center gap-2 text-xs">
-        <span className="text-muted-foreground">Reviewer</span>
-        <Avatar size="sm" />
-        <span className="font-medium">{PERSON.seat}</span>
-      </div>
-
+      <p className="font-heading text-xl font-semibold">{PERSON.name}</p>
       <button
         type="button"
         onClick={() => setMerged((m) => !m)}
-        className="mt-auto rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white hover:bg-green-700"
+        className="rounded-md bg-green-600 px-3 py-1 text-xs font-semibold text-white hover:bg-green-700"
       >
-        {merged ? "Merged ✓" : "Merge pull request"}
+        {merged ? "Merged" : "Merge"}
       </button>
     </div>
   );
