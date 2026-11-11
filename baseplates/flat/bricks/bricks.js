@@ -81,12 +81,60 @@
 import { notesBrick } from "./notes-XX";
 import { checklistBrick } from "./checklist-XX";
 import { hudLG } from "./hud-LG";
+import { nametagAC } from "./nametag-AC";
+import { pinSN } from "./pin-SN";
+import { specSheetLU } from "./spec-sheet-LU";
+import { cellKE } from "./cell-KE";
+import { bubbleAS } from "./bubble-AS";
+import { punchCardNI } from "./punch-card-NI";
+import { lanyardME } from "./lanyard-ME";
+import { studentIdDY } from "./student-id-DY";
+import { notebookCR } from "./notebook-CR";
+import { posterMH } from "./poster-MH";
+import { prBadgePO } from "./pr-badge-PO";
+import { blueprintJE } from "./blueprint-JE";
+import { metalCardKR } from "./metal-card-KR";
+import { pinSetAN } from "./pin-set-AN";
+import { badgeEL } from "./badge-EL";
+import { posterHS } from "./poster-HS";
+import { magicCardDY } from "./magic-card-DY";
+import { ttyAS } from "./tty-AS";
+import { prBadgeJD } from "./pr-badge-JD";
+import { appIconAT } from "./app-icon-AT";
+import { surveyJA } from "./survey-JA";
+import { ticketRE } from "./ticket-RE";
+import { xlsStickerME } from "./xls-sticker-ME";
+import { aiSummarizerBrick } from "./ai-summarizer-LG";
 import { hudJU } from "./hud-JU";
 
 export const bricks = [
   notesBrick,
   checklistBrick,
   hudLG,
+  nametagAC,
+  pinSN,
+  specSheetLU,
+  cellKE,
+  bubbleAS,
+  punchCardNI,
+  lanyardME,
+  studentIdDY,
+  notebookCR,
+  posterMH,
+  prBadgePO,
+  blueprintJE,
+  metalCardKR,
+  pinSetAN,
+  badgeEL,
+  posterHS,
+  magicCardDY,
+  ttyAS,
+  prBadgeJD,
+  appIconAT,
+  surveyJA,
+  ticketRE,
+  xlsStickerME,
+  aiSummarizerBrick,
   hudJU,
 ];
 

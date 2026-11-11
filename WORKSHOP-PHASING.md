@@ -28,6 +28,7 @@ These are decided. Do not reopen them in the room.
 ```
 main                    ← 2:00. Flat only. Codespaces boot this.
   └── phase-1-iterate   ← merge in the 3:35 break. Adds Sketchpad + 3D Viewer.
+        └── phase-2-ai  ← RESERVE. Only if the room is far ahead. See below.
 ```
 
 `phase-1-iterate` **contains `main`** and only adds to it. Cut it from `main` after the last README / devcontainer fix, so the merge adds files and never drops any.
@@ -273,6 +274,27 @@ Both halves already exist in the Boston repo, and this repo’s `main` matches w
 **Leave behind:** `building-dashboard/`, `pdf-markup/`, `vector-editor/`, `lib/artifacts.js`, `artifacts/seed.json`, the PDF and SVG samples, `/api` demos.
 
 Before you open the PR: `npm run build`, then click every 3D mode in a fresh Codespace.
+
+---
+
+## Reserve: `phase-2-ai` (only if the room runs fast)
+
+Boston's lesson still stands — a second unlock is what sank its afternoon — so this is a break-glass branch, not a plan. Merge it only if, by ~4:15, nearly everyone has a nametag **and** an iterate brick on `main`, and there is a natural pause. Otherwise leave it unmerged; it costs nothing to keep.
+
+It is cut from `phase-1-iterate` and contains it, so **merge `phase-1-iterate` first**. It is a port of Boston's `phase 2` commit (`dfd70fa`), and like phase 1 it only adds:
+
+- **`/api/claude`** takes an optional `maxTokens` (capped at 16k; default now 4096). **`/api/fal`** runs any fal endpoint (`{ model, input, fetchFile? }`) as well as the old `{ prompt }`; `lib/fal.js` gains `runModel` / `fetchResultFile`.
+- **Flat:** `ai-summarizer-LG` — paste notes, Claude summarizes. The smallest worked example of a brick calling `/api/claude`.
+- **Sketchpad:** bricks may now contribute `panels` beside the pad (they receive `getSketchDataUrl`). `sketch-to-3d-LG` sends the drawing to fal's Hunyuan3D and orbits the GLB. Initialed, so it starts **off** — switch it on in the kit tray.
+- **Vector Editor** (`baseplates/vector-editor/`, nav slot 30): a full SVG drafting app whose `ai-XX` panel draws with Claude (JSON path data in sheet units) or Recraft (text → SVG, image → SVG). Plus `public/sample-data/floor-plan.svg` and `lib/artifacts.js`. Boston's attendee bricks `accessible-route-SJ` and `door-clearance-TK` were left behind.
+
+**Keys.** Claude features run on the OpenRouter key the Codespace already has. The fal features (sketch → 3D, Recraft) need `FAL_KEY` in `.env.local` and a dev-server restart — nothing in `.devcontainer/` supplies it. Decide before the day whether you hand out a fal key at all; if not, steer the room to the Claude features.
+
+**AI starter prompts** (on the menu if you merge it):
+
+- "Add a Flat card that takes a room schedule I paste in and asks Claude which rooms look undersized."
+- "Add a Sketchpad panel that sends my drawing to Claude and gets back a one-line critique."
+- "Make the Vector Editor's AI panel send the current drawing to Claude, so I can ask it to add a stair core that fits what's already there."
 
 ---
 
