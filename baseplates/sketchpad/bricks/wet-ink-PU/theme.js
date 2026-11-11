@@ -8,6 +8,7 @@
 //   • a thin, minimal type treatment
 //   • only three swatches, recoloured black / plum / emerald
 //   • the "Size" label reads "Flow"
+//   • a "Dry canvas" button appears next to Clear
 //
 // How it knows Wet ink is active: the baseplate prints the active brush's
 // `hint` under the canvas. If a <p> with exactly our hint is on the page, we
@@ -23,6 +24,7 @@ import { INK_HEX, SWATCH_FOR_INK } from "./inks";
 const ATTR = "data-wet-ink";
 const FLOW_ATTR = "data-wet-ink-flow";
 const STYLE_ID = "wet-ink-PU-theme";
+const DRY_ID = "wet-ink-PU-dry";
 
 const KEPT = new Set(Object.values(SWATCH_FOR_INK));
 
@@ -91,7 +93,7 @@ ${hide}
 `;
 }
 
-export function installWetInkTheme(hint) {
+export function installWetInkTheme(hint, { onDry } = {}) {
   if (typeof window === "undefined" || typeof document === "undefined") return;
 
   // Hot reload re-runs this module; drop the previous observer first.
@@ -118,8 +120,10 @@ export function installWetInkTheme(hint) {
           span.setAttribute(FLOW_ATTR, "");
         }
       }
-    } else if (root.hasAttribute(ATTR)) {
-      root.removeAttribute(ATTR);
+      if (onDry && !document.getElementById(DRY_ID)) addDryButton(onDry);
+    } else {
+      if (root.hasAttribute(ATTR)) root.removeAttribute(ATTR);
+      document.getElementById(DRY_ID)?.remove();
     }
   };
 
@@ -140,4 +144,26 @@ export function installWetInkTheme(hint) {
   else window.addEventListener("DOMContentLoaded", start, { once: true });
 
   window.__wetInkPU = observer;
+}
+
+// Cloned from the baseplate's Clear button so it matches the toolbar.
+function addDryButton(onDry) {
+  const clear = [...document.querySelectorAll("button")].find(
+    (b) => b.textContent === "Clear"
+  );
+  if (!clear) return;
+  const button = document.createElement("button");
+  button.id = DRY_ID;
+  button.type = "button";
+  button.className = clear.className;
+  button.textContent = "Dry canvas";
+  button.title = "Let the wet ink dry — new ink becomes a separate layer on top";
+  button.addEventListener("click", () => {
+    onDry();
+    button.textContent = "Dried";
+    setTimeout(() => {
+      button.textContent = "Dry canvas";
+    }, 900);
+  });
+  clear.after(button);
 }

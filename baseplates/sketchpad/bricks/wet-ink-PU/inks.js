@@ -27,3 +27,6 @@ const INK_FOR_SWATCH = Object.fromEntries(
 export function inkFor(hex) {
   return INK_FOR_SWATCH[String(hex).toLowerCase()] ?? "black";
 }
+
+// One wet layer per ink, in this order (index.js).
+export const INK_ORDER = ["black", "plum", "emerald"];
