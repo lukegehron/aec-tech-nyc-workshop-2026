@@ -13,23 +13,18 @@
 //      keeps flowing while the button stays down, even if you hold still
 //      (holding still pools and blooms). Release and the flow freezes.
 //
-// Inks are fixed to sumi black, plum and emerald. The toolbar swatches belong
-// to the baseplate, so the selected swatch is mapped to the nearest ink.
+// Inks are fixed to sumi black, plum and emerald (see inks.js). While this
+// brush is active, theme.js warms up the page, thins the type, trims the
+// swatches to those three inks and renames the size slider "Flow".
+//
+// FLOW — the slider's 1–24 value is not a size here. It sets how much ink the
+// brush lets go: higher flow = heavier core, more pigment particles, a faster
+// bloom when you hold still, and a slightly wider, wetter mark.
 
-const INKS = {
-  black: [26, 22, 20],
-  plum: [92, 34, 78],
-  emerald: [12, 110, 78],
-};
+import { INKS, inkFor } from "./inks";
+import { installWetInkTheme } from "./theme";
 
-// Baseplate swatch → ink. Anything unknown falls back to nearest-by-hue.
-const SWATCH_TO_INK = {
-  "#111827": "black",
-  "#ef4444": "plum",
-  "#3b82f6": "plum",
-  "#22c55e": "emerald",
-  "#f59e0b": "black",
-};
+const HINT = "Ink on wet paper — keeps bleeding while held. Flow sets how much ink.";
 
 const PAPER = [238, 224, 198]; // warm cream
 const MAX_PARTICLES = 700;
@@ -43,7 +38,7 @@ export const wetInkBrush = {
   id: "wet-ink-PU",
   label: "Wet ink",
   order: 60,
-  hint: "Ink on wet paper — keeps bleeding while held. Black · plum · emerald",
+  hint: HINT,
 
   stroke(p, { color, weight, from, to }) {
     const g = p.drawingContext;
@@ -58,7 +53,8 @@ export const wetInkBrush = {
     }
 
     const ink = INKS[inkFor(color)];
-    const size = Math.max(2, weight);
+    const flow = Math.min(1, Math.max(0, (weight - 1) / 23)); // 0…1
+    const size = 5 + flow * 5;
     const dist = Math.hypot(to.x - from.x, to.y - from.y);
     still = dist < 0.8 ? still + 1 : 0;
 
@@ -72,16 +68,16 @@ export const wetInkBrush = {
       const x = from.x + (to.x - from.x) * t;
       const y = from.y + (to.y - from.y) * t;
       // Fast strokes carry less ink.
-      const load = 0.22 / (1 + dist * 0.04);
+      const load = (0.05 + flow * 0.3) / (1 + dist * 0.04);
       blob(g, x, y, size * (0.9 + Math.random() * 0.3), ink, load);
-      spawn(p, x, y, to.x - from.x, to.y - from.y, size, 2);
+      spawn(p, x, y, to.x - from.x, to.y - from.y, size, 1 + Math.round(flow * 3));
     }
 
     // ── Holding still: the drop keeps feeding the paper and blooms ─────────
     if (still > 0) {
-      const bloom = size * (1 + Math.min(still, 240) * 0.035);
-      blob(g, to.x, to.y, bloom, ink, 0.025);
-      spawn(p, to.x, to.y, 0, 0, size, 3);
+      const bloom = size * (1 + Math.min(still, 240) * (0.015 + flow * 0.04));
+      blob(g, to.x, to.y, bloom, ink, 0.008 + flow * 0.035);
+      spawn(p, to.x, to.y, 0, 0, size, 1 + Math.round(flow * 4));
     }
 
     // ── Advance the wet pigment ────────────────────────────────────────────
@@ -100,7 +96,7 @@ export const wetInkBrush = {
 
       const fade = q.life / q.max;
       if (q.tendril) {
-        g.strokeStyle = rgba(ink, 0.18 * fade);
+        g.strokeStyle = rgba(ink, (0.08 + flow * 0.16) * fade);
         g.lineWidth = Math.max(0.4, q.r * 0.5);
         g.lineCap = "round";
         g.beginPath();
@@ -108,7 +104,7 @@ export const wetInkBrush = {
         g.lineTo(q.x, q.y);
         g.stroke();
       } else {
-        blob(g, q.x, q.y, q.r, ink, 0.05 * fade);
+        blob(g, q.x, q.y, q.r, ink, (0.02 + flow * 0.06) * fade);
       }
 
       if (q.life > 0 && q.r > 0.3) {
@@ -123,6 +119,8 @@ export const wetInkBrush = {
     g.restore();
   },
 };
+
+installWetInkTheme(HINT);
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -157,17 +155,6 @@ function blob(g, x, y, r, ink, alpha) {
 
 function rgba([r, g, b], a) {
   return `rgba(${r},${g},${b},${a})`;
-}
-
-function inkFor(hex) {
-  const key = String(hex).toLowerCase();
-  if (SWATCH_TO_INK[key]) return SWATCH_TO_INK[key];
-  const n = parseInt(key.replace("#", ""), 16);
-  const r = (n >> 16) & 255;
-  const gr = (n >> 8) & 255;
-  const b = n & 255;
-  if (Math.max(r, gr, b) < 70) return "black";
-  return gr > r && gr >= b ? "emerald" : "plum";
 }
 
 // Fresh canvas = pure white in two opposite corners (paper never is).
