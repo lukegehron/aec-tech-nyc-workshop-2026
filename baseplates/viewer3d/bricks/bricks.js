@@ -106,6 +106,8 @@ import { commentsBrick } from "./comments-CD";
 import { clashDetectBrick } from "./clash-detect-ME";
 import { curtainWallKR } from "./curtain-wall-KR";
 import { large3dmBrick } from "./large-3dm-CD";
+import { switchbackStairKR } from "./switchback-stair-KR";
+import { wallpaperBrick } from "./wallpaper-JD";
 
 export const bricks = [
   massingBrick,
@@ -124,6 +126,8 @@ export const bricks = [
   clashDetectBrick,
   curtainWallKR,
   large3dmBrick,
+  switchbackStairKR,
+  wallpaperBrick,
 ];
 
 const byOrder = (a, b) => (a.order ?? 0) - (b.order ?? 0);

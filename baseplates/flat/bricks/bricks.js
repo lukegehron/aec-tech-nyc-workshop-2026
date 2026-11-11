@@ -86,6 +86,11 @@ import { pinSN } from "./pin-SN";
 import { specSheetLU } from "./spec-sheet-LU";
 import { panoSN } from "./pano-SN";
 import { skySN } from "./sky-SN";
+import { roadSN } from "./road-SN";
+import { citySN } from "./city-SN";
+import { assetsSN } from "./assets-SN";
+import { viewportsSN } from "./viewports-SN";
+import { topoSN } from "./topo-SN";
 import { cellKE } from "./cell-KE";
 import { bubbleAW } from "./bubble-AW";
 import { punchCardNI } from "./punch-card-NI";
@@ -120,6 +125,11 @@ export const bricks = [
   specSheetLU,
   panoSN,
   skySN,
+  roadSN,
+  citySN,
+  assetsSN,
+  viewportsSN,
+  topoSN,
   cellKE,
   bubbleAW,
   punchCardNI,
