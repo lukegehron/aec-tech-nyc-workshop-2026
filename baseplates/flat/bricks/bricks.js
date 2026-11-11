@@ -91,6 +91,7 @@ import { lanyardME } from "./lanyard-ME";
 import { studentIdDY } from "./student-id-DY";
 import { notebookCR } from "./notebook-CR";
 import { posterMH } from "./poster-MH";
+import { assetsSN } from "./assets-SN";
 
 export const bricks = [
   notesBrick,
@@ -106,6 +107,7 @@ export const bricks = [
   studentIdDY,
   notebookCR,
   posterMH,
+  assetsSN,
 ];
 
 export const cardsByOrder = bricks
