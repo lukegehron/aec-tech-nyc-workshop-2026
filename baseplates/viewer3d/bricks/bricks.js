@@ -102,8 +102,10 @@ import { ltlRenderBrick } from "./ltl-render-CD";
 import { spaceshipBrick } from "./spaceship-KC";
 import { wallToolLU } from "./wall-tool-LU";
 import { empireStateEL } from "./empire-state-EL";
+import { commentsBrick } from "./comments-CD";
 import { clashDetectBrick } from "./clash-detect-ME";
 import { curtainWallKR } from "./curtain-wall-KR";
+import { large3dmBrick } from "./large-3dm-CD";
 import { switchbackStairKR } from "./switchback-stair-KR";
 import { wallpaperBrick } from "./wallpaper-JD";
 import { streetViewME } from "./street-view-ME";
@@ -122,8 +124,10 @@ export const bricks = [
   spaceshipBrick,
   wallToolLU,
   empireStateEL,
+  commentsBrick,
   clashDetectBrick,
   curtainWallKR,
+  large3dmBrick,
   switchbackStairKR,
   wallpaperBrick,
   streetViewME,
