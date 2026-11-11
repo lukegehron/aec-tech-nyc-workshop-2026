@@ -102,6 +102,7 @@ import { ttyAS } from "./tty-AS";
 import { prBadgeJD } from "./pr-badge-JD";
 import { appIconAT } from "./app-icon-AT";
 import { surveyJA } from "./survey-JA";
+import { ticketRE } from "./ticket-RE";
 
 export const bricks = [
   notesBrick,
@@ -128,6 +129,7 @@ export const bricks = [
   prBadgeJD,
   appIconAT,
   surveyJA,
+  ticketRE,
 ];
 
 export const cardsByOrder = bricks
