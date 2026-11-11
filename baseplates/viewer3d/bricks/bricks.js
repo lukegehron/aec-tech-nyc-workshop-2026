@@ -97,6 +97,7 @@ import { measureBrick } from "./measure-XX";
 import { zSliceBrick } from "./z-slice-XX";
 import { rhinoImportBrick } from "./rhino-import-XX";
 import { dontClickBrick } from "./dont-click-RH";
+import { ltlRenderBrick } from "./ltl-render-CD";
 
 export const bricks = [
   massingBrick,
@@ -106,6 +107,7 @@ export const bricks = [
   zSliceBrick,
   rhinoImportBrick,
   dontClickBrick,
+  ltlRenderBrick,
 ];
 
 const byOrder = (a, b) => (a.order ?? 0) - (b.order ?? 0);
