@@ -7,13 +7,18 @@
  * Same two-line contract, one level in: one import above, one array entry
  * below. The brush buttons read this list — `Screen.jsx` has none of its own.
  *
- * A BRICK here is a BRUSH: one way of drawing between two points.
+ * A BRICK here is usually a BRUSH: one way of drawing between two points.
  *
  *   id      unique string
  *   label   the button label
  *   order   button position (10, 20, 30 … leave gaps)
  *   hint    one line under the toolbar — say what it does
- *   stroke(p, ctx)   REQUIRED. Draw one frame's worth of mark.
+ *   stroke(p, ctx)   Draw one frame's worth of mark. Required for a brush.
+ *
+ * A brick may skip `stroke` and contribute a panel instead (or as well):
+ *
+ *   panels  [ { id, label, order, Panel } ]
+ *       Panel props: { getSketchDataUrl } — PNG data URL of the pad.
  *
  * `p` is the p5 instance — the whole p5 API is yours (`p.stroke`, `p.line`,
  * `p.ellipse`, `p.random`, `p.width`, `p.height`, …).
@@ -25,8 +30,8 @@
  *   to      {x, y} where the pointer is now
  *
  * The baseplate calls `stroke` once per frame while the pointer is down and inside
- * the canvas — so a brush never handles events, only marks. That's the whole
- * contract; the shortest brick on this baseplate is six lines.
+ * the canvas — so a brush never handles events, only marks. Panels render beside
+ * the pad. The shortest brush on this baseplate is six lines.
  *
  * Bricks don't import each other.
  *
@@ -63,8 +68,9 @@ import { penBrush } from "./pen-XX";
 import { sprayBrush } from "./spray-XX";
 import { calligraphyBrush } from "./calligraphy-XX";
 import { mirrorBrush } from "./mirror-XX";
+import { sketchTo3dBrick } from "./sketch-to-3d-LG";
 
-export const bricks = [penBrush, sprayBrush, calligraphyBrush, mirrorBrush];
+export const bricks = [penBrush, sprayBrush, calligraphyBrush, mirrorBrush, sketchTo3dBrick];
 
 function shownBricks(hiddenSet) {
   const hidden =
@@ -74,10 +80,24 @@ function shownBricks(hiddenSet) {
   return visibleBricks("sketchpad", bricks, hidden);
 }
 
-export const brushesByOrder = [...bricks].sort((a, b) => a.order - b.order);
+function brushesFrom(list) {
+  return list
+    .filter((brick) => typeof brick.stroke === "function")
+    .sort((a, b) => a.order - b.order);
+}
+
+function panelsFrom(list) {
+  return list.flatMap((brick) => brick.panels ?? []).sort((a, b) => a.order - b.order);
+}
+
+export const brushesByOrder = brushesFrom(bricks);
 
 export function kitBrushes(hiddenSet) {
-  return [...shownBricks(hiddenSet)].sort((a, b) => a.order - b.order);
+  return brushesFrom(shownBricks(hiddenSet));
+}
+
+export function kitPanels(hiddenSet) {
+  return panelsFrom(shownBricks(hiddenSet));
 }
 
 // Falls back to the first brush rather than throwing, so a half-finished brick
