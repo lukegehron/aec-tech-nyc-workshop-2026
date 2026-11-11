@@ -1,4 +1,4 @@
-/**
+  /**
  * This baseplate's brick registry — the inner studs.
  *
  * `lib/baseplates.js` snaps the BASEPLATES into the app.
@@ -81,13 +81,13 @@
 import { notesBrick } from "./notes-XX";
 import { checklistBrick } from "./checklist-XX";
 import { hudLG } from "./hud-LG";
-import { appIconAL } from "./app-icon-AL";
+import { appIconAT } from "./app-icon-AT";
 
 export const bricks = [
   notesBrick,
   checklistBrick,
   hudLG,
-  appIconAL,
+  appIconAT,
 ];
 
 export const cardsByOrder = bricks

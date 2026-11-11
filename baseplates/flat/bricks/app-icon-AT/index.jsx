@@ -6,13 +6,21 @@ import { useState } from "react";
 
 const USER = {
   name: "Alex",
-  initials: "AL",
+  initials: "AT",
   title: "AEC AI Scout",
   github: "@alexmthomas",
   seat: "Architect",
   toolkit: "Rhino · Revit · Grasshopper · Excel · Hypar · Forma",
   sticker: "🏗️",
 };
+
+// Wooden panel background — pure CSS, no assets.
+const WOOD_BACKGROUND = [
+  "repeating-linear-gradient(90deg, rgba(60,30,10,0) 0px, rgba(60,30,10,0.12) 1px, rgba(60,30,10,0) 3px, rgba(255,220,170,0.06) 5px, rgba(60,30,10,0) 9px)",
+  "repeating-linear-gradient(90deg, rgba(90,50,20,0.18) 0px, rgba(90,50,20,0) 22px, rgba(140,90,45,0.14) 41px, rgba(90,50,20,0) 67px)",
+  "repeating-linear-gradient(90deg, rgba(30,15,5,0.55) 0px, rgba(30,15,5,0.55) 2px, transparent 2px, transparent 96px)",
+  "linear-gradient(180deg, #b9854f 0%, #a8733f 50%, #96653a 100%)",
+].join(", ");
 
 function AppIconTile({ expanded }) {
   const [portraitFailed, setPortraitFailed] = useState(false);
@@ -25,7 +33,10 @@ function AppIconTile({ expanded }) {
     .filter(Boolean);
 
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-3 overflow-hidden rounded-2xl bg-gradient-to-b from-sky-100 to-indigo-200 p-4 dark:from-slate-800 dark:to-indigo-950">
+    <div
+      className="flex h-full flex-col items-center justify-center gap-3 overflow-hidden rounded-2xl p-4 shadow-[inset_0_0_40px_rgba(0,0,0,0.45)]"
+      style={{ background: WOOD_BACKGROUND }}
+    >
       {/* App icon */}
       <div className="flex flex-col items-center gap-1.5">
         <div
@@ -50,7 +61,7 @@ function AppIconTile({ expanded }) {
             {USER.sticker}
           </span>
         </div>
-        <p className="text-xs font-medium text-slate-800 dark:text-slate-100">
+        <p className="text-xs font-medium text-amber-50 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
           {USER.name}
         </p>
       </div>
@@ -58,13 +69,13 @@ function AppIconTile({ expanded }) {
       {/* Tiny splash */}
       <div className="flex flex-col items-center gap-0.5 text-center">
         <p
-          className={`font-heading font-semibold tracking-tight text-slate-900 dark:text-white ${
+          className={`font-heading font-semibold tracking-tight text-amber-50 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)] ${
             expanded ? "text-xl" : "text-[11px]"
           }`}
         >
           {USER.title}
         </p>
-        <p className="text-[9px] uppercase tracking-widest text-slate-600 dark:text-slate-300">
+        <p className="text-[9px] uppercase tracking-widest text-amber-100/90">
           {USER.seat}
         </p>
       </div>
@@ -74,7 +85,7 @@ function AppIconTile({ expanded }) {
           {toolkit.map((tool) => (
             <span
               key={tool}
-              className="rounded-full bg-white/70 px-2 py-0.5 text-xs text-slate-700 dark:bg-white/10 dark:text-slate-200"
+              className="rounded-full bg-amber-50/80 px-2 py-0.5 text-xs text-amber-950"
             >
               {tool}
             </span>
@@ -85,8 +96,8 @@ function AppIconTile({ expanded }) {
   );
 }
 
-export const appIconAL = {
-  id: "app-icon-AL",
+export const appIconAT = {
+  id: "app-icon-AT",
   label: USER.name,
   cards: [
     {
