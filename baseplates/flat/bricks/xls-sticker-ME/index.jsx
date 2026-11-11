@@ -7,6 +7,8 @@
 
 import { useState } from "react";
 
+import { AussieShepherd } from "./AussieShepherd";
+
 const USER = {
   name: "Megan",
   initials: "ME",
@@ -19,6 +21,9 @@ const USER = {
 
 // The one joke. Big type, bottom of the sheet.
 const JOKE = "Every building is a spreadsheet that learned to stand up.";
+
+// The office dog. She herds the rows back when they scatter.
+const DOG = "Blue";
 
 const COLUMNS = ["A", "B", "C"];
 
@@ -148,10 +153,15 @@ function XlsSticker({ expanded }) {
         </div>
       </div>
 
-      {/* The joke — big type, where the sum would go */}
-      <div className="border-t border-[#217346]/20 bg-[#e6f1ea] px-3 py-2">
+      {/* The joke — big type, where the sum would go. The Australian Shepherd
+          sits beside it, in the slot the paperclip used to occupy. */}
+      <div className="flex items-center gap-3 border-t border-[#217346]/20 bg-[#e6f1ea] px-3 py-2">
+        <AussieShepherd
+          className={expanded ? "size-24 shrink-0" : "size-10 shrink-0"}
+          title={`${DOG}, Australian Shepherd`}
+        />
         <p
-          className={`font-heading font-bold leading-tight text-[#217346] ${
+          className={`min-w-0 font-heading font-bold leading-tight text-[#217346] ${
             expanded ? "text-2xl" : "text-sm"
           }`}
         >
@@ -166,7 +176,7 @@ function XlsSticker({ expanded }) {
         </span>
         <span className="font-mono">+</span>
         <span className="ml-auto font-mono tabular-nums">
-          Ready · {toolkit.length} tools
+          Ready · {toolkit.length} tools · 1 dog
         </span>
       </div>
     </div>
