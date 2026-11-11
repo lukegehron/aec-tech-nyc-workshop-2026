@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useAtom, useAtomValue } from "jotai";
 import { useFrame, useStore } from "@react-three/fiber";
 import * as THREE from "three";
-import { Pencil } from "lucide-react";
+import { Pencil, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ltlRenderActiveAtom } from "./atoms";
+import { ltlPeopleAtom, ltlRenderActiveAtom } from "./atoms";
+import { buildPeople, faceCamera, footprintsOf, placePeople } from "./people";
 
 /**
  * LTL SKETCH — restyle whatever is in the scene as a loose ink-and-wash
@@ -129,45 +130,85 @@ function restore(mesh) {
   delete mesh.userData.ltlLines;
 }
 
-function LtlRenderScene({ palette }) {
+function disposeCrowd(crowd) {
+  if (!crowd.group) return;
+  crowd.group.parent?.remove(crowd.group);
+  crowd.group.userData.dispose?.();
+  crowd.group = null;
+  crowd.key = null;
+}
+
+function LtlRenderScene({ palette, data }) {
   const store = useStore();
   const active = useAtomValue(ltlRenderActiveAtom);
+  const people = useAtomValue(ltlPeopleAtom);
+  const crowd = useRef({ group: null, key: null });
 
   // Paper and ink follow the theme via the palette, so this brick never reads
   // `resolvedTheme`.
   const hsl = { h: 0, s: 0, l: 0 };
   new THREE.Color(palette.ground).getHSL(hsl);
   const dark = hsl.l < 0.5;
-  const paper = new THREE.Color(dark ? "#1d1c1a" : "#fbfaf6");
-  const ink = new THREE.Color(dark ? "#e8e4da" : "#1c1b19");
+  const paperHex = dark ? "#1d1c1a" : "#fbfaf6";
+  const inkHex = dark ? "#e8e4da" : "#1c1b19";
+  const paper = new THREE.Color(paperHex);
+  const ink = new THREE.Color(inkHex);
+  const outline = data.site.outline;
 
-  useFrame(({ scene }) => {
+  useFrame(({ scene, camera }) => {
     if (!active) return;
     scene.traverse((obj) => {
       if (isBox(obj)) style(obj, paper, ink);
     });
+
+    const state = crowd.current;
+    if (!people) {
+      disposeCrowd(state);
+      return;
+    }
+    // Rebuild only when what is drawn changes (mode, floor, building).
+    const entries = footprintsOf(scene);
+    const key = entries.map(([k]) => k).join(";") + paperHex;
+    if (key !== state.key) {
+      disposeCrowd(state);
+      const xs = outline.map((p) => p[0]);
+      const ys = outline.map((p) => p[1]);
+      const bounds = {
+        minX: Math.min(...xs),
+        maxX: Math.max(...xs),
+        minY: Math.min(...ys),
+        maxY: Math.max(...ys),
+      };
+      state.group = buildPeople(placePeople(entries, bounds), palette, paper, ink);
+      state.key = key;
+      scene.add(state.group);
+    }
+    faceCamera(state.group, camera);
   });
 
   useEffect(() => {
     if (!active) return undefined;
     const { scene, invalidate } = store.getState();
     const previous = scene.background;
-    scene.background = new THREE.Color(dark ? "#1d1c1a" : "#fbfaf6");
+    scene.background = new THREE.Color(paperHex);
+    const state = crowd.current;
     invalidate();
     return () => {
       scene.background = previous;
+      disposeCrowd(state);
       scene.traverse((obj) => {
         if (obj.userData?.ltlOriginal) restore(obj);
       });
       invalidate();
     };
-  }, [store, active, dark]);
+  }, [store, active, paperHex]);
 
   return null;
 }
 
 function LtlRenderToolbar() {
   const [active, setActive] = useAtom(ltlRenderActiveAtom);
+  const [people, setPeople] = useAtom(ltlPeopleAtom);
   return (
     <div className="flex items-center gap-2 rounded-md border p-0.5">
       <Button
@@ -181,6 +222,19 @@ function LtlRenderToolbar() {
         <Pencil className="size-3.5" />
         LTL Sketch
       </Button>
+      {active ? (
+        <Button
+          size="sm"
+          variant={people ? "secondary" : "ghost"}
+          className="h-7 gap-1.5 px-2 text-xs"
+          onClick={() => setPeople(!people)}
+          aria-pressed={people}
+          title="Scatter scale figures on the ground plane, sized to the scene"
+        >
+          <Users className="size-3.5" />
+          People
+        </Button>
+      ) : null}
     </div>
   );
 }
