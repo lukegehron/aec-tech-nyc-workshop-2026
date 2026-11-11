@@ -22,6 +22,37 @@ to step through the list. Results are sorted **worst first**. The focused clash
 gets a label and a brighter marker. **Re-run** retests — do that after importing
 a model or switching view mode.
 
+## The report panel
+
+A **clash report** docks to the right-hand edge of the viewer listing every
+clash found, each row naming the two elements involved (`wall-1 ↔ wall-2`,
+`door ↔ wall-3`, `Mesh ↔ column`), the depth or gap in metres, and a `HARD` /
+`CLR` tag so the two kinds are distinguishable without relying on colour.
+
+- **Click a row** to highlight that clash in the scene — it drives the same
+  focus the `‹ ›` arrows do, so the list and the 3D markers stay in step.
+- The strip under the header repeats **what was tested** (`hard`, or
+  `clearance · closer than 0.3 m`), because a count means nothing without it.
+- It still renders when the model is clean, saying **"No clashes found"** —
+  hiding the panel then would read as the tool having failed.
+- Close it with the `✕`, or the clipboard button in the toolbar. Collapsed, it
+  leaves a small tab showing the count.
+
+### Why the panel is a drei `<Html>`
+
+The baseplate gives a brick two extension points — `Toolbar` (HTML, in the
+toolbar row) and `Scene3d` (r3f elements, inside `<Canvas>`). There is **no
+side-panel slot**, and adding one would mean editing `Screen.jsx`, which a brick
+must never do.
+
+drei's `<Html>` is the way out: it renders real DOM and appends it to
+`gl.domElement.parentNode`, which here is the Screen's
+`relative h-[70vh] … overflow-hidden` canvas wrapper. So an absolutely
+positioned card lands docked to the viewer's right edge, clipped to it, exactly
+as if the baseplate had offered a slot. `calculatePosition` is pinned to the
+origin so it behaves as chrome rather than a label tracking a 3D point, and the
+card re-enables `pointer-events` that drei's wrapper disables.
+
 ## Why it reads the live scene
 
 The test walks the **live three.js scene graph** rather than rebuilding boxes
@@ -91,6 +122,7 @@ the deliberate slab gaps, or import a `.3dm` that lands inside the massing.
 ## Files
 
 - `index.jsx` — `Toolbar` + `Scene3d`, and the brick export.
+- `ClashReport.jsx` — the side panel listing every clash.
 - `clash.js` — the test. Plain data in, plain data out, no r3f.
 - `atoms.js` — this tool's own state. The baseplate's `../../atoms.js` holds what
   the *baseplate* owns (mode, level); a clash report is not that, and keeping it
