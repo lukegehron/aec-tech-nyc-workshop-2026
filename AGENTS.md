@@ -93,7 +93,10 @@ contract and stay plain.
 
 **Wednesday git (the whole room shares this repo):**
 
-- Your branch is your **GitHub username** for the whole workshop. Do not make a branch per brick.
+- Your branch is **your initials** (e.g. `LG`). Facilitators already created
+  it, and you pick it when you create the Codespace. Stay on it for the whole
+  workshop. Do not make a branch per brick, and do not make a branch named
+  after your GitHub username.
 - Each PR adds **one new folder** (plus two lines in that baseplate's
   `bricks/bricks.js`). Facilitators merge. You never press Merge.
 - After a merge is announced: commit your work, then `git pull origin main`.
@@ -105,8 +108,11 @@ Use this exact loop repeatedly. Do not create a new branch, merge a PR, or push
 directly to `main`.
 
 1. **Before editing:** run `git status --short --branch`. Work only on the
-   branch named after the user's GitHub username. If there are unexpected
-   changes, stop and ask rather than discarding them.
+   user's initials branch (two capital letters, e.g. `LG`) — that is whatever
+   branch the Codespace is already on, as long as it is not `main`. Never
+   create or switch branches to match a GitHub username. If the current branch
+   is `main`, or there are unexpected changes, stop and ask rather than
+   guessing or discarding them.
 2. **Implement/refine:** make the requested change and run the relevant checks.
    Refinements and redos stay uncommitted until the user asks for a commit, or
    become additional commits on the same branch if a PR is already open.
@@ -119,7 +125,7 @@ directly to `main`.
    use the GitHub REST API with the existing `GITHUB_TOKEN`, `GITHUB_API_URL`,
    and `GITHUB_REPOSITORY` environment variables when needed.
 5. **After the facilitator merges:** run `git pull origin main`, then
-   `git push origin HEAD`. The second command advances the remote username
+   `git push origin HEAD`. The second command advances the remote initials
    branch to the merged `main` commit and clears VS Code's **Sync Changes N ↑**
    indicator. Finish by checking `git status --short --branch`; the working
    tree should be clean and have no ahead/behind count.
@@ -162,7 +168,7 @@ if [ -z "$pr_url" ]; then
 fi
 printf '%s\n' "$pr_url"
 
-# Refresh this username branch after its PR is merged
+# Refresh this initials branch after its PR is merged
 git pull origin main
 git push origin HEAD
 git status --short --branch
