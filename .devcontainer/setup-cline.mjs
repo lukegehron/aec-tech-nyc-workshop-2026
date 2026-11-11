@@ -13,6 +13,9 @@ import path from "node:path";
 const home = os.homedir();
 const apiKey = process.env.OPENROUTER_API_KEY ?? "";
 const defaultModel = "anthropic/claude-sonnet-5.5";
+// Cline treats a missing reasoning effort as "none". Seed medium, but only when
+// unset: this script re-runs on every attach and must not undo an attendee's pick.
+const defaultReasoningEffort = "medium";
 const now = new Date().toISOString();
 
 const autoApprovalSettings = {
@@ -63,7 +66,12 @@ function mergeJson(filePath, patch, mode = 0o600) {
 }
 
 const globalStatePath = path.join(dataDir, "globalState.json");
+const existingGlobalState = readJson(globalStatePath);
 mergeJson(globalStatePath, {
+  planModeReasoningEffort:
+    existingGlobalState.planModeReasoningEffort ?? defaultReasoningEffort,
+  actModeReasoningEffort:
+    existingGlobalState.actModeReasoningEffort ?? defaultReasoningEffort,
   welcomeViewCompleted: true,
   isNewUser: false,
   mode: "act",
@@ -85,6 +93,10 @@ mergeJson(secretsPath, {
 
 const providersPath = path.join(settingsDir, "providers.json");
 const existingProviders = readJson(providersPath);
+// The UI stores the picker as { enabled, effort }; picking "none" leaves
+// { enabled: false }, so an existing object means the attendee chose.
+const existingReasoning =
+  existingProviders.providers?.openrouter?.settings?.reasoning;
 writeJson(providersPath, {
   ...existingProviders,
   version: existingProviders.version ?? 1,
@@ -96,6 +108,10 @@ writeJson(providersPath, {
         provider: "openrouter",
         apiKey,
         model: defaultModel,
+        reasoning: existingReasoning ?? {
+          enabled: true,
+          effort: defaultReasoningEffort,
+        },
         timeout: 30000,
       },
       updatedAt: now,
