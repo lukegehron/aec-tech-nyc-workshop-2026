@@ -1,7 +1,7 @@
 import { askClaude, apiKey } from "@/lib/claude";
 
 // POST /api/claude
-// Body: { messages: [{ role, content }], system?: string, model?: string }
+// Body: { messages: [{ role, content }], system?: string, model?: string, maxTokens?: number }
 // This runs on the server — the API key never reaches the browser.
 export async function POST(request) {
   // `apiKey` is ANTHROPIC_API_KEY or, in a Codespace, ANTHROPIC_AUTH_TOKEN —
@@ -20,14 +20,18 @@ export async function POST(request) {
   }
 
   try {
-    const { messages, system, model } = await request.json();
+    const { messages, system, model, maxTokens } = await request.json();
     if (!Array.isArray(messages)) {
       return Response.json(
         { error: "Body must include a `messages` array." },
         { status: 400 }
       );
     }
-    const text = await askClaude(messages, { system, model });
+    const options = { system, model };
+    if (Number.isFinite(maxTokens) && maxTokens > 0) {
+      options.maxTokens = Math.min(Math.round(maxTokens), 16384);
+    }
+    const text = await askClaude(messages, options);
     return Response.json({ text });
   } catch (err) {
     return Response.json({ error: String(err?.message ?? err) }, { status: 500 });

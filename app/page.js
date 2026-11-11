@@ -18,7 +18,7 @@ export default function Home() {
         </h1>
         <p className="mt-4 text-lg text-muted-foreground">
           Start on Flat. Your first brick is a nametag. Your branch is your
-          GitHub username. One new folder per PR — facilitators merge. After a
+          initials. One new folder per PR — facilitators merge. After a
           merge: <code className="text-sm">git pull origin main</code>, keep
           both.
         </p>
