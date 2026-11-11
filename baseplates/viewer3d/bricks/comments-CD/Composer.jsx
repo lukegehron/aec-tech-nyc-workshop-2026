@@ -59,16 +59,24 @@ export function Composer({ target, team = [], onSubmit, onDiscard }) {
     : [];
   const active = Math.min(choice, Math.max(matches.length - 1, 0));
 
+  // Re-read the text and caret from the textarea itself rather than from this
+  // render's closure: a click on the list or an Enter can arrive after state
+  // has moved on, when there is no @query any more. No query, nothing to do.
   const pick = (member) => {
-    const after = text.slice(caret);
-    const next = `${text.slice(0, mention.start)}@${handleOf(member)} ${after}`;
-    const at = mention.start + handleOf(member).length + 2;
+    const el = ref.current;
+    const current = el ? el.value : text;
+    const at = el ? el.selectionStart : caret;
+    const found = queryAt(current, at);
+    if (!found) return;
+    const handle = `@${handleOf(member)} `;
+    const next = current.slice(0, found.start) + handle + current.slice(at);
+    const nextCaret = found.start + handle.length;
     setText(next);
-    setCaret(at);
+    setCaret(nextCaret);
     setChoice(0);
     requestAnimationFrame(() => {
       ref.current?.focus();
-      ref.current?.setSelectionRange(at, at);
+      ref.current?.setSelectionRange(nextCaret, nextCaret);
     });
   };
   const send = () => {
