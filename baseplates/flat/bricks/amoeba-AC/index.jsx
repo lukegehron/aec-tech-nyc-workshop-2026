@@ -6,7 +6,7 @@
 // Press and drag to pull the nearest part of the outline; its neighbours follow
 // with a falloff, so the body stretches like a membrane. Double-click resets.
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // The outline is a ring of control points joined by a smooth closed curve
 // (Catmull-Rom converted to cubic Béziers), so the shape can be pulled around.
@@ -42,10 +42,47 @@ function smoothPath(pts) {
 
 const clamp = (v) => Math.min(LIMIT.max, Math.max(LIMIT.min, v));
 
+// Idle motion: every point wobbles on its own phase and speed, and the whole
+// body drifts around. `t` is seconds of animation; it pauses while hovered.
+const WOBBLE = 9;
+const DRIFT = 12;
+
+function idleOffset(i, t) {
+  return [
+    Math.sin(t * (0.9 + i * 0.13) + i * 1.7) * WOBBLE,
+    Math.cos(t * (0.8 + i * 0.11) + i * 2.3) * WOBBLE,
+  ];
+}
+
 export function AmoebaCard({ expanded }) {
   const [hover, setHover] = useState(null); // { hue, light } | null
   const [points, setPoints] = useState(REST_POINTS);
   const [drag, setDrag] = useState(null); // { index, last: [x, y] } | null
+  const [t, setT] = useState(0); // animation clock, seconds
+
+  // Swim until the pointer is over the amoeba (or it is being dragged).
+  const still = hover !== null || drag !== null;
+  useEffect(() => {
+    if (still) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let frame;
+    let last = performance.now();
+    const tick = (now) => {
+      setT((s) => s + (now - last) / 1000);
+      last = now;
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [still]);
+
+  // What is drawn and hit-tested: the dragged shape plus the current idle motion.
+  const driftX = Math.sin(t * 0.5) * DRIFT;
+  const driftY = Math.cos(t * 0.37) * DRIFT * 0.7;
+  const shown = points.map(([x, y], i) => {
+    const [ox, oy] = idleOffset(i, t);
+    return [clamp(x + ox + driftX), clamp(y + oy + driftY)];
+  });
 
   // Pointer position in the SVG's 0–200 viewBox coordinates.
   function toSvg(e) {
@@ -72,7 +109,7 @@ export function AmoebaCard({ expanded }) {
     const at = toSvg(e);
     let index = 0;
     let best = Infinity;
-    points.forEach(([x, y], i) => {
+    shown.forEach(([x, y], i) => {
       const dist = Math.hypot(x - at[0], y - at[1]);
       if (dist < best) {
         best = dist;
@@ -119,15 +156,17 @@ export function AmoebaCard({ expanded }) {
         aria-label="Amoeba that changes colour as you hover and can be pulled and stretched"
       >
         <path
-          d={smoothPath(points)}
+          d={smoothPath(shown)}
           fill={fill}
           stroke={stroke}
           strokeWidth="3"
           style={{ transition: "fill 120ms linear, stroke 120ms linear" }}
         />
+        <g transform={`translate(${driftX.toFixed(1)} ${driftY.toFixed(1)})`} pointerEvents="none">
         <ellipse cx="108" cy="104" rx="16" ry="13" fill="white" fillOpacity="0.35" pointerEvents="none" />
         <circle cx="62" cy="136" r="5" fill="white" fillOpacity="0.3" pointerEvents="none" />
         <circle cx="140" cy="64" r="4" fill="white" fillOpacity="0.3" pointerEvents="none" />
+        </g>
       </svg>
       <p className="text-xs tabular-nums text-muted-foreground">
         {drag ? "stretching…" : hover ? `hue ${hover.hue}° · drag to stretch · double-click to reset` : "hover, then drag to stretch the amoeba"}
