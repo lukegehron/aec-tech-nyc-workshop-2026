@@ -84,6 +84,7 @@ import { hudLG } from "./hud-LG";
 import { studentIdDY } from "./student-id-DY";
 import { notebookCR } from "./notebook-CR";
 import { posterMH } from "./poster-MH";
+import { magicCardDY } from "./magic-card-DY";
 
 export const bricks = [
   notesBrick,
@@ -92,6 +93,7 @@ export const bricks = [
   studentIdDY,
   notebookCR,
   posterMH,
+  magicCardDY,
 ];
 
 export const cardsByOrder = bricks
