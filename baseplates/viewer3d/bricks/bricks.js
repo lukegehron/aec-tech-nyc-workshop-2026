@@ -101,6 +101,7 @@ import { ltlRenderBrick } from "./ltl-render-CD";
 import { spaceshipBrick } from "./spaceship-KC";
 import { wallToolLU } from "./wall-tool-LU";
 import { empireStateEL } from "./empire-state-EL";
+import { commentsBrick } from "./comments-CD";
 
 export const bricks = [
   massingBrick,
@@ -114,6 +115,7 @@ export const bricks = [
   spaceshipBrick,
   wallToolLU,
   empireStateEL,
+  commentsBrick,
 ];
 
 const byOrder = (a, b) => (a.order ?? 0) - (b.order ?? 0);
