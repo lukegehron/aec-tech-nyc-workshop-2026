@@ -61,7 +61,7 @@ export const prBadgeJD = {
   label: "June Deng",
   cards: [
     {
-      id: "pr-badge",
+      id: "pr-badge-JD",
       label: "June Deng",
       order: 90,
       span: 1,
