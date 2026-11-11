@@ -96,6 +96,7 @@ import { spacesBrick } from "./spaces-XX";
 import { measureBrick } from "./measure-XX";
 import { zSliceBrick } from "./z-slice-XX";
 import { rhinoImportBrick } from "./rhino-import-XX";
+import { wallpaperBrick } from "./wallpaper-JD";
 
 export const bricks = [
   massingBrick,
@@ -104,6 +105,7 @@ export const bricks = [
   measureBrick,
   zSliceBrick,
   rhinoImportBrick,
+  wallpaperBrick,
 ];
 
 const byOrder = (a, b) => (a.order ?? 0) - (b.order ?? 0);
