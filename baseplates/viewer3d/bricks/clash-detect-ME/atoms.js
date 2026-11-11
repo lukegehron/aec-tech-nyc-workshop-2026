@@ -33,3 +33,11 @@ export const clashFocusAtom = atom(null);
 
 /** True between asking for a run and getting results back. */
 export const clashBusyAtom = atom(false);
+
+/**
+ * Is the side report open?
+ *
+ * Defaults on, because a clash test whose results you have to go looking for
+ * isn't much of a report. Closing it leaves the markers in the scene.
+ */
+export const clashReportOpenAtom = atom(true);

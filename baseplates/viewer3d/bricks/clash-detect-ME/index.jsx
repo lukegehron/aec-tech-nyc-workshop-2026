@@ -4,9 +4,16 @@ import { useEffect, useRef, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useFrame, useStore } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
-import { ChevronLeft, ChevronRight, ScanSearch, X } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ClipboardList,
+  ScanSearch,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { ClashReport } from "./ClashReport";
 import {
   collectSolids,
   findClashes,
@@ -18,6 +25,7 @@ import {
   clashBusyAtom,
   clashFocusAtom,
   clashModeAtom,
+  clashReportOpenAtom,
   clashResultsAtom,
   clashRunTokenAtom,
   clashToleranceAtom,
@@ -180,12 +188,15 @@ function ClashScene({ palette }) {
   if (!active) return null;
 
   const marks = results.filter((clash) => clash.position);
-  if (marks.length === 0) return null;
-
   const focused = focus != null ? marks[focus] : null;
 
+  // The report renders even with nothing to mark — "No clashes found" is the
+  // most useful thing a clash report can say, and hiding the panel when the
+  // model is clean would read as the tool having failed.
   return (
     <group userData={IGNORE}>
+      <ClashReport />
+
       {marks.map((clash, index) => {
         const isFocused = focused?.key === clash.key;
         // Hard clashes in the accent colour, clearance flags in the softer one.
@@ -246,6 +257,7 @@ function ClashToolbar() {
   const results = useAtomValue(clashResultsAtom);
   const busy = useAtomValue(clashBusyAtom);
   const bumpRun = useSetAtom(clashRunTokenAtom);
+  const [reportOpen, setReportOpen] = useAtom(clashReportOpenAtom);
 
   const overflow = results.find((clash) => clash.overflow);
   const marks = results.filter((clash) => clash.position);
@@ -355,6 +367,16 @@ function ClashToolbar() {
               </Button>
             </>
           ) : null}
+
+          <Button
+            size="sm"
+            variant={reportOpen ? "secondary" : "ghost"}
+            className="h-7 w-7 px-0"
+            onClick={() => setReportOpen(!reportOpen)}
+            title={reportOpen ? "Hide the clash report" : "Show the clash report"}
+          >
+            <ClipboardList className="size-3.5" />
+          </Button>
 
           <Button
             size="sm"
