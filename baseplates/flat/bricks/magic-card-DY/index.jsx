@@ -24,7 +24,7 @@ const PIPS = [
 function Plate({ children, className = "" }) {
   return (
     <div
-      className={`rounded-md border border-amber-900/60 bg-gradient-to-b from-amber-50 to-amber-200 shadow-sm ${className}`}
+      className={`rounded-md border border-amber-900/60 bg-linear-to-b from-amber-50 to-amber-200 shadow-sm ${className}`}
     >
       {children}
     </div>
@@ -43,13 +43,13 @@ function MagicCard({ expanded }) {
   return (
     <div className="flex h-full items-center justify-center">
       <div
-        className={`flex aspect-[5/7] h-full max-h-full w-auto max-w-full flex-col rounded-[6%/4.5%] bg-gradient-to-br from-stone-900 via-neutral-800 to-stone-950 p-[3%] shadow-xl ${
+        className={`flex aspect-5/7 h-full max-h-full w-auto max-w-full flex-col rounded-[6%/4.5%] bg-linear-to-br from-stone-900 via-neutral-800 to-stone-950 p-[3%] shadow-xl ${
           expanded ? "text-base" : "text-[10px]"
         }`}
         style={{ minHeight: 0 }}
       >
         {/* Ornate gilded frame */}
-        <div className="flex min-h-0 flex-1 flex-col gap-[1.5%] rounded-[4%/3%] border-[3px] border-double border-amber-500 bg-gradient-to-b from-amber-100 via-orange-100 to-amber-200 p-[3%] text-stone-900 shadow-[inset_0_0_0_2px_rgba(120,53,15,0.5)]">
+        <div className="flex min-h-0 flex-1 flex-col gap-[1.5%] rounded-[4%/3%] border-[3px] border-double border-amber-500 bg-linear-to-b from-amber-100 via-orange-100 to-amber-200 p-[3%] text-stone-900 shadow-[inset_0_0_0_2px_rgba(120,53,15,0.5)]">
           {/* Name + mana pips */}
           <Plate className="flex items-center justify-between gap-1 px-2 py-1">
             <span className="font-heading text-[1.15em] font-bold leading-tight">
@@ -69,9 +69,9 @@ function MagicCard({ expanded }) {
           </Plate>
 
           {/* Large portrait window */}
-          <div className="relative min-h-0 flex-[6] overflow-hidden rounded-sm border-[3px] border-amber-900/80 bg-slate-800 shadow-[inset_0_0_12px_rgba(0,0,0,0.6)]">
+          <div className="relative min-h-0 flex-6 overflow-hidden rounded-sm border-[3px] border-amber-900/80 bg-slate-800 shadow-[inset_0_0_12px_rgba(0,0,0,0.6)]">
             {portraitFailed ? (
-              <div className="flex size-full items-center justify-center bg-gradient-to-b from-indigo-900 via-purple-800 to-fuchsia-700">
+              <div className="flex size-full items-center justify-center bg-linear-to-b from-indigo-900 via-purple-800 to-fuchsia-700">
                 <span className="font-heading text-6xl font-bold text-amber-200 drop-shadow">
                   {CARD.initials}
                 </span>
@@ -109,7 +109,7 @@ function MagicCard({ expanded }) {
           </Plate>
 
           {/* Abilities + flavor */}
-          <div className="min-h-0 flex-[4] overflow-hidden rounded-sm border border-amber-900/50 bg-amber-50/90 px-2 py-1.5">
+          <div className="min-h-0 flex-4 overflow-hidden rounded-sm border border-amber-900/50 bg-amber-50/90 px-2 py-1.5">
             <p className="text-[0.9em] leading-snug">
               <span className="font-bold">Tool Tap</span> — · : Tap Excel,
               Rhino or Revit to untap a spreadsheet nobody trusted.

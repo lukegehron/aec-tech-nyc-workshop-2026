@@ -34,14 +34,14 @@ function MagicCard({ expanded }) {
   return (
     <div className="flex h-full items-center justify-center">
       <div
-        className={`flex aspect-[5/7] h-full max-h-full w-auto max-w-full flex-col rounded-[6%/4.5%] bg-neutral-900 p-[3.5%] shadow-lg ${
+        className={`flex aspect-5/7 h-full max-h-full w-auto max-w-full flex-col rounded-[6%/4.5%] bg-neutral-900 p-[3.5%] shadow-lg ${
           expanded ? "text-base" : "text-[10px]"
         }`}
         style={{ minHeight: 0 }}
       >
         <div className="flex min-h-0 flex-1 flex-col gap-[2%] rounded-[4%/3%] border-2 border-amber-600/70 bg-amber-100 p-[3%] text-stone-900">
           {/* Title bar: name + mana cost */}
-          <div className="flex items-center justify-between gap-1 rounded-md border border-stone-500 bg-gradient-to-b from-amber-50 to-amber-200 px-2 py-1 shadow-sm">
+          <div className="flex items-center justify-between gap-1 rounded-md border border-stone-500 bg-linear-to-b from-amber-50 to-amber-200 px-2 py-1 shadow-sm">
             <span className="font-heading text-[1.2em] font-bold leading-none">
               {USER.name}
             </span>
@@ -59,7 +59,7 @@ function MagicCard({ expanded }) {
           </div>
 
           {/* Art window */}
-          <div className="relative min-h-0 flex-[5] overflow-hidden rounded-sm border-2 border-stone-700 bg-gradient-to-b from-indigo-900 via-purple-800 to-fuchsia-700">
+          <div className="relative min-h-0 flex-5 overflow-hidden rounded-sm border-2 border-stone-700 bg-linear-to-b from-indigo-900 via-purple-800 to-fuchsia-700">
             {/* Arcane glow */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_55%,rgba(250,204,21,0.45),transparent_60%)]" />
             <div className="absolute inset-x-0 bottom-0 flex justify-center">
@@ -97,7 +97,7 @@ function MagicCard({ expanded }) {
           </div>
 
           {/* Type line */}
-          <div className="flex items-center justify-between rounded-md border border-stone-500 bg-gradient-to-b from-amber-50 to-amber-200 px-2 py-0.5 shadow-sm">
+          <div className="flex items-center justify-between rounded-md border border-stone-500 bg-linear-to-b from-amber-50 to-amber-200 px-2 py-0.5 shadow-sm">
             <span className="text-[1em] font-semibold leading-tight">
               Creature — Spellcaster ({USER.title})
             </span>
@@ -107,7 +107,7 @@ function MagicCard({ expanded }) {
           </div>
 
           {/* Rules text */}
-          <div className="min-h-0 flex-[3] overflow-hidden rounded-sm border border-stone-400 bg-amber-50 px-2 py-1.5">
+          <div className="min-h-0 flex-3 overflow-hidden rounded-sm border border-stone-400 bg-amber-50 px-2 py-1.5">
             <p className="text-[0.95em] leading-snug">
               <span className="font-semibold">Hard Hat</span> — Dylan has
               protection from falling deadlines.
@@ -128,7 +128,7 @@ function MagicCard({ expanded }) {
             <span className="font-mono text-[0.8em] italic text-stone-700">
               Illus. {USER.github}
             </span>
-            <span className="rounded-md border border-stone-600 bg-gradient-to-b from-amber-50 to-amber-200 px-2 py-0.5 text-[1em] font-bold shadow-sm">
+            <span className="rounded-md border border-stone-600 bg-linear-to-b from-amber-50 to-amber-200 px-2 py-0.5 text-[1em] font-bold shadow-sm">
               {toolkit.length}/{USER.title.length}
             </span>
           </div>
