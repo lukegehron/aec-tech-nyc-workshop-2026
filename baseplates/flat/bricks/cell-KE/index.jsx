@@ -75,9 +75,16 @@ function CellBadge({ expanded }) {
             </td>
           </tr>
           {toolkit.map((tool, i) => (
-            <tr key={tool}>
-              <th className={rowHeader}>{i + 2}</th>
-              <td className={gridCell}>{tool}</td>
+            <tr key={tool} className={i % 2 === 0 ? "bg-green-50" : "bg-white"}>
+              <th className={`${rowHeader} bg-green-100 text-green-800`}>
+                {i + 2}
+              </th>
+              <td
+                className={`${gridCell} border-l-4 border-l-green-600 font-semibold text-green-900`}
+              >
+                <span className="mr-2 text-green-600">✓</span>
+                {tool}
+              </td>
               <td className={gridCell} />
               <td className={gridCell} />
             </tr>
