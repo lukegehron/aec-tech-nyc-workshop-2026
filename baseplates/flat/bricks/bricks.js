@@ -84,6 +84,9 @@ import { hudLG } from "./hud-LG";
 import { pinSN } from "./pin-SN";
 import { panoSN } from "./pano-SN";
 import { skySN } from "./sky-SN";
+import { roadSN } from "./road-SN";
+import { citySN } from "./city-SN";
+import { assetsSN } from "./assets-SN";
 import { cellKE } from "./cell-KE";
 import { bubbleAS } from "./bubble-AS";
 import { punchCardNI } from "./punch-card-NI";
@@ -91,7 +94,6 @@ import { lanyardME } from "./lanyard-ME";
 import { studentIdDY } from "./student-id-DY";
 import { notebookCR } from "./notebook-CR";
 import { posterMH } from "./poster-MH";
-import { assetsSN } from "./assets-SN";
 
 export const bricks = [
   notesBrick,
@@ -100,6 +102,9 @@ export const bricks = [
   pinSN,
   panoSN,
   skySN,
+  roadSN,
+  citySN,
+  assetsSN,
   cellKE,
   bubbleAS,
   punchCardNI,
@@ -107,7 +112,6 @@ export const bricks = [
   studentIdDY,
   notebookCR,
   posterMH,
-  assetsSN,
 ];
 
 export const cardsByOrder = bricks
