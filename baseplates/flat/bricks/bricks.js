@@ -87,6 +87,7 @@ import { skySN } from "./sky-SN";
 import { roadSN } from "./road-SN";
 import { citySN } from "./city-SN";
 import { assetsSN } from "./assets-SN";
+import { viewportsSN } from "./viewports-SN";
 import { cellKE } from "./cell-KE";
 import { bubbleAS } from "./bubble-AS";
 import { punchCardNI } from "./punch-card-NI";
@@ -105,6 +106,7 @@ export const bricks = [
   roadSN,
   citySN,
   assetsSN,
+  viewportsSN,
   cellKE,
   bubbleAS,
   punchCardNI,
