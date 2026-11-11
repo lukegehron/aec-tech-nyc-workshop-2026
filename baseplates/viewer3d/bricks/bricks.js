@@ -104,6 +104,7 @@ import { wallToolLU } from "./wall-tool-LU";
 import { empireStateEL } from "./empire-state-EL";
 import { clashDetectBrick } from "./clash-detect-ME";
 import { curtainWallKR } from "./curtain-wall-KR";
+import { switchbackStairKR } from "./switchback-stair-KR";
 
 export const bricks = [
   massingBrick,
@@ -120,6 +121,7 @@ export const bricks = [
   empireStateEL,
   clashDetectBrick,
   curtainWallKR,
+  switchbackStairKR,
 ];
 
 const byOrder = (a, b) => (a.order ?? 0) - (b.order ?? 0);
