@@ -2,23 +2,25 @@
 
 AEC Tech NYC · Wednesday, November 11, 2:00–5:00 pm · Verizon Education Center, Cornell Tech
 
-One shared repo. One branch (your GitHub username). One new folder per pull request. Two facilitators merge — **you never press Merge**.
+One shared repo. One branch (your initials). One new folder per pull request. Two facilitators merge — **you never press Merge**.
 
 [Create a Codespace](https://codespaces.new/lukegehron/aec-tech-nyc-workshop-2026)
 
-## 1 · Create your branch
+## 1 · Open your Codespace
 
 1. Ideally use a **personal** GitHub account (a work SSO may cause issues).
-2. Create a new git branch named after your GitHub username. Stay on this branch for the whole workshop.
-3. Open **Code → Codespaces → New with options**. Do not use the green button or plus button.
+2. Your branch already exists: it is **your two initials** (e.g. `LG`). Do not create a new branch. Stay on this one for the whole workshop.
+3. Open **Code → Codespaces → New with options**. Do not use the green button or plus button. Pick **your initials branch**.
 4. Paste the `sk-or-` key from a facilitator into `OPENROUTER_API_KEY`.
-5. Create the Codespace. The first boot takes a few minutes — that is expected.
+5. Create the Codespace. The first boot takes a few minutes — that is expected. Press **Trust** when it asks.
 
-## 2 · Open Cline and check it works
+## 2 · Open Cline and start the app
 
-1. Drag the **Cline** icon (the robot) in the left sidebar, right-click, move to secondary toolbar .
-2. Run `npm run dev` in the terminal to make sure things are working correctly.
-3. Click **Open in Browser** on port 3000.
+1. Drag the **Cline** icon (the robot) in the left sidebar, right-click, **Move To → Secondary Side Bar**.
+2. In the **Terminal** tab, type `npm run dev` and wait for **Ready**. Leave that terminal open all afternoon.
+3. Open the **Ports** tab and click the link for port **3000**.
+
+If `npm run dev` says *Another next dev server is already running*, the app is already up — just open port 3000.
 
 ## 3 · Three rules
 
@@ -32,30 +34,35 @@ After the break, two new surfaces appear in the nav: **Sketchpad** (draw) and th
 
 Open **Flat Baseplate**. Copy the stub folder, put your initials on it, snap it on with two lines, and turn the clock into a trading card.
 
-In Cline, stay in **Act** (toggle at the bottom of the panel if it says Plan). Paste the prompt from the bottom of the checkin questionnaire, then send.
+In Cline, press **+** for a new chat and stay in **Act** (toggle at the bottom of the panel if it says Plan). Paste the prompt from the bottom of the check-in questionnaire, then send.
 
 Then: look at the browser (not the diff first). Steer with a follow-up, or restore a Cline checkpoint if it went wrong.
 
-### Ship it
+### Ship it — with buttons
 
-When the brick looks right, ask Cline to ship it. Paste this:
+Open **Source Control** (the branch icon in the left bar). The message box should say *commit on* **your initials** branch. If it says `main`, stop and ask a facilitator.
 
-> Follow the **Wednesday Git loop for agents** in `AGENTS.md`. Review the changes
-> for this brick and run the relevant checks. If everything is ready, stage
-> only this brick's new folder and its two registration lines, make a concise
-> commit, push my current GitHub-username branch, and open a pull request into
-> `main`. If this branch already has an open pull request, update that one
-> instead of opening another. Do not merge it. Give me the pull request link
-> when you are done.
+1. **Message** — click the **Cline** icon (the robot) at the top of **Changes**. It writes the commit message for you.
+2. **Commit** — the green button.
+3. **Push** — click **Sync Changes** (or **Publish Branch**).
+4. **Pull request** — click the **Create Pull Request** icon at the top of **Changes**. Into `main`, then **Create**.
+5. **Stop.** A facilitator merges. You never press Merge.
 
-Stop there. A facilitator will merge the pull request. When they say the wall
-has your card, paste this into Cline:
+Accept the popups about copying text to the clipboard.
 
-> Follow the post-merge step in the **Wednesday Git loop for agents** in
-> `AGENTS.md`. The pull request has been merged. Pull the latest `main` into my
-> current GitHub-username branch, then push the current branch so its remote is
-> also up to date. Do not create or switch branches. Finish by confirming the
-> working tree is clean with no commits ahead or behind.
+### After we merge — type one command
+
+When a facilitator says the wall has your card, open a **new terminal** (the **+**) — not the one running `npm run dev` — and type:
+
+```bash
+git pull origin main
+```
+
+Then click **Sync Changes** once more so your branch on GitHub catches up too.
+
+- *divergent branches* / *need to specify how to reconcile*: run `git pull --no-rebase --no-edit origin main`.
+- A merge-message tab opens: just close it.
+- A conflict: **keep both**.
 
 Every later brick is the same loop: new folder, initials on the `id`, two lines in that baseplate's `bricks.js`, new PR, wait.
 

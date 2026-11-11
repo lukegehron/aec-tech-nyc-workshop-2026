@@ -30,7 +30,7 @@ Nobody edited `Screen.jsx`. The grid found it by itself.
 ## 3 · Now make it yours
 
 Rename first — folder and `id` to the same name ending in your two initials.
-Stay on the git branch named after your GitHub username. Open a new PR for
+Stay on your initials branch (e.g. `LG`) — it already exists. Open a new PR for
 this folder; facilitators merge.
 
 ```

@@ -18,7 +18,7 @@ These are decided. Do not reopen them in the room.
 
 - One shared repo. Attendees PR into `main`.
 - **One** phase PR (`phase-1-iterate`), merged once, during the break.
-- Attendee branch = **GitHub username**, the whole afternoon. Initials live on the folder and `id`.
+- Attendee branch = **their initials** (pre-created by facilitators), the whole afternoon. Initials live on the folder and `id`.
 - **Two facilitators merge.** Attendees never press Merge.
 - First README prompt = **nametag**.
 - This file is Wednesday-only. Monday / template-vs-fork is out of scope here.
@@ -27,7 +27,7 @@ These are decided. Do not reopen them in the room.
 
 ```
 main                    ← 2:00. Flat only. Codespaces boot this.
-  └── phase-1-iterate   ← merge in the 3:20 break. Adds Sketchpad + 3D Viewer.
+  └── phase-1-iterate   ← merge in the 3:35 break. Adds Sketchpad + 3D Viewer.
         └── phase-2-ai  ← RESERVE. Only if the room is far ahead. See below.
 ```
 
@@ -151,8 +151,8 @@ In Boston, most people stayed on their card, and that was fine. Sketchpad pulled
 | 2:00 | Welcome + setup: GitHub account, **New with options**, paste the key. | Codespaces on `main`. No merge. |
 | ~2:10 | Talk while Codespaces boot: the deck’s opening (A-02 → A-10b) — why you’re here, the two hackathon stories, how fast this moves, you’re the AEC expert, GitHub is Drive + 3D Warehouse, which AI. | Still `main`. |
 | ~2:40 | **Card.** Agent vs chat (A-15), break-it-and-undo (A-17), nametag, GitHub in six words (A-18), first PR. | Social wall fills. Merge on sight. |
-| 3:20 | **Ten-minute break.** Merge **`phase-1-iterate`** while they are gone. | One merge, nobody mid-edit. |
-| 3:30 | Reveal: “look at the nav.” Everyone commits, pulls. Five habits (A-20). | Two new surfaces. |
+| 3:35 | **Ten-minute break.** Merge **`phase-1-iterate`** while they are gone. | One merge, nobody mid-edit. |
+| 3:45 | Reveal: “look at the nav.” Everyone commits, pulls. Five habits (A-20). | Two new surfaces. |
 | ~3:35 | **Iterate.** Card grows inputs, a Sketchpad brush, or a 3D view mode. | Second wave of PRs. |
 | ~4:35 | **Close.** Last merges. Three or four volunteers demo on the projector in 60 seconds each (A-25: the annoyance / show it working / what’s next). Survival kit, Saturday’s hackathon. | Nothing new merges after the demos. |
 | 5:00 | Done. | Every working tree clean, nothing ahead or behind. |
@@ -312,8 +312,8 @@ Do not open the phase PR from an attendee fork. It is yours, already reviewed, a
 ## Decisions to lock before anyone is invited
 
 1. Day-of is a **shared repo**; Monday is template-or-fork. Not both on Saturday.
-2. **One** phase PR, `phase-1-iterate` (Sketchpad + 3D Viewer), cut from `main`, merged in the 3:20 break.
-3. Afternoon branch = **GitHub username**. Initials live on the folder/`id`.
+2. **One** phase PR, `phase-1-iterate` (Sketchpad + 3D Viewer), cut from `main`, merged in the 3:35 break.
+3. Afternoon branch = **initials** (pre-created). Initials live on the folder/`id`.
 4. **Who may merge** attendee PRs (two facilitators, approve on sight).
 5. First README prompt = **nametag**, not a landing page.
 

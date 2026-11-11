@@ -32,7 +32,7 @@ elif [[ "${OPENROUTER_API_KEY}" != sk-or-* ]]; then
 else
   echo "  ✓  OpenRouter key loaded"
   echo "  ✓  Cline configured — click its icon in the left sidebar"
-  echo "  ✓  Workshop app starting — port 3000 will open automatically"
+  echo "  ✓  Start the app: type npm run dev, then open port 3000 in Ports"
   echo ""
   echo "     Beginner: open Cline (stay in Act) and paste the nametag prompt"
   echo "     Advanced: run claude in a terminal (also uses OpenRouter)"

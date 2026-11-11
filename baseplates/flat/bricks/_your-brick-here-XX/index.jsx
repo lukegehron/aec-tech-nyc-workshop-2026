@@ -40,7 +40,7 @@ function YourCard({ expanded }) {
 
 export const yourBrick = {
   // Two things, one name: this id and the folder. Swap `_your-brick-here-XX`
-  // for `<something>-<your initials>`. Your git branch is your GitHub username.
+  // for `<something>-<your initials>`. Your git branch is your initials (e.g. LG).
   id: "_your-brick-here-XX",
   label: "Your card",
   cards: [
