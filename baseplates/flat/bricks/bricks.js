@@ -84,6 +84,8 @@ import { hudLG } from "./hud-LG";
 import { nametagAC } from "./nametag-AC";
 import { pinSN } from "./pin-SN";
 import { specSheetLU } from "./spec-sheet-LU";
+import { panoSN } from "./pano-SN";
+import { skySN } from "./sky-SN";
 import { cellKE } from "./cell-KE";
 import { bubbleAS } from "./bubble-AS";
 import { punchCardNI } from "./punch-card-NI";
@@ -114,6 +116,8 @@ export const bricks = [
   nametagAC,
   pinSN,
   specSheetLU,
+  panoSN,
+  skySN,
   cellKE,
   bubbleAS,
   punchCardNI,
