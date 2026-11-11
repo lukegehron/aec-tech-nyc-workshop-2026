@@ -7,7 +7,12 @@ runs the industry: a spreadsheet.
   outline around it.
 - **Title in the formula bar** — `fx  =AgentOperator()`.
 - **Seat + GitHub handle** in row 2, **toolkit** one tool per row from row 3.
-- **One joke**, big type, in the band where the sum would go.
+- **One joke**, big type, in the band where the sum would go — with **Blue the
+  Australian Shepherd** sitting next to it, in the slot the paperclip assistant
+  used to occupy. She's hand-drawn inline SVG (`AussieShepherd.jsx`): blue merle
+  coat, white blaze, copper cheeks, one blue eye and one brown, and the nub tail.
+  No image request, so nothing to fail on venue Wi-Fi. She grows to `size-24`
+  when the card is expanded.
 - **Excel green** (`#217346`) ribbon, sheet tab and status bar.
 - **Portrait** is `https://github.com/meganrsalazar5-collab.png`; if it fails to
   load, the avatar falls back to the initials `ME`.
