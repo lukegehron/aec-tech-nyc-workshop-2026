@@ -107,6 +107,7 @@ import { curtainWallKR } from "./curtain-wall-KR";
 import { switchbackStairKR } from "./switchback-stair-KR";
 import { wallpaperBrick } from "./wallpaper-JD";
 import { streetViewME } from "./street-view-ME";
+import { globeBrick } from "./globe-RH";
 
 export const bricks = [
   massingBrick,
@@ -126,6 +127,7 @@ export const bricks = [
   switchbackStairKR,
   wallpaperBrick,
   streetViewME,
+  globeBrick,
 ];
 
 const byOrder = (a, b) => (a.order ?? 0) - (b.order ?? 0);
