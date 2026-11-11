@@ -110,6 +110,7 @@ import { aiSummarizerBrick } from "./ai-summarizer-LG";
 import { sharedSpaceDY } from "./shared-space-DY";
 import { amoebaAC } from "./amoeba-AC";
 import { photoArtAT } from "./photo-art-AT";
+import { spyIdZA } from "./spy-id-ZA";
 
 export const bricks = [
   notesBrick,
@@ -144,6 +145,7 @@ export const bricks = [
   sharedSpaceDY,
   amoebaAC,
   photoArtAT,
+  spyIdZA,
 ];
 
 export const cardsByOrder = bricks
