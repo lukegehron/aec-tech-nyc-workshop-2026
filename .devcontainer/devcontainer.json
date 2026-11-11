@@ -62,7 +62,9 @@
       "extensions": [
         // Cline (marketplace id is still saoudrizwan.claude-dev). OpenRouter
         // BYOK and auto-approve are seeded by setup-cline.mjs, not this list.
-        "saoudrizwan.claude-dev",
+        // Pinned: setup-cline.mjs writes Cline's internal state files, whose
+        // format can change between releases. Re-test the seeding before bumping.
+        "saoudrizwan.claude-dev@4.1.26",
         "anthropic.claude-code",
         "dbaeumer.vscode-eslint",
         "bradlc.vscode-tailwindcss",
@@ -72,6 +74,8 @@
         // Explicitly undo the broad AI-feature switch from an earlier broken
         // workshop revision; it can persist in an existing Codespace.
         "chat.disableAIFeatures": false,
+        // Keep the pinned Cline (and everyone's tools) identical all workshop.
+        "extensions.autoUpdate": false,
         "editor.formatOnSave": false,
         "files.eol": "\n",
         "terminal.integrated.inheritEnv": true,
@@ -83,6 +87,8 @@
   // Claude Code will not allow its optional bypass-permissions mode as root.
   "remoteUser": "node",
   "hostRequirements": {
-    "cpus": 2
+    // 4 cores: first attach installs extensions, activates Cline, and compiles
+    // Next all at once, which crawls on 2.
+    "cpus": 4
   }
 }
