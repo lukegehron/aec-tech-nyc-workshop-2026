@@ -98,6 +98,7 @@ import { zSliceBrick } from "./z-slice-XX";
 import { rhinoImportBrick } from "./rhino-import-XX";
 import { dontClickBrick } from "./dont-click-RH";
 import { ltlRenderBrick } from "./ltl-render-CD";
+import { clashDetectBrick } from "./clash-detect-ME";
 
 export const bricks = [
   massingBrick,
@@ -108,6 +109,7 @@ export const bricks = [
   rhinoImportBrick,
   dontClickBrick,
   ltlRenderBrick,
+  clashDetectBrick,
 ];
 
 const byOrder = (a, b) => (a.order ?? 0) - (b.order ?? 0);
