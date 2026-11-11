@@ -203,8 +203,8 @@ const TICKET_KEYFRAMES = `
 }
 @keyframes ticketRE-marquee-x { to { transform: translateX(-50%); } }
 @keyframes ticketRE-marquee-y { to { transform: translateY(-50%); } }
-.ticketRE-marquee-x { animation: ticketRE-marquee-x 40s linear infinite; }
-.ticketRE-marquee-y { animation: ticketRE-marquee-y 40s linear infinite; }
+.ticketRE-marquee-x { animation: ticketRE-marquee-x 80s linear infinite; }
+.ticketRE-marquee-y { animation: ticketRE-marquee-y 80s linear infinite; }
 .ticketRE-marquee-rev { animation-direction: reverse; }
 .ticketRE-kaleido-a { animation: ticketRE-spin 24s linear infinite; }
 .ticketRE-kaleido-b { animation: ticketRE-spin-rev 36s linear infinite; }
@@ -219,13 +219,37 @@ const TICKET_KEYFRAMES = `
 }
 `;
 
+// ── Hand cursors at double the native size (browser cursors can't be scaled) ──────────────────────
+const HAND_SIZE = 40; // px; the native hand is ~20px
+const handCursor = (paths) => {
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${HAND_SIZE}" height="${HAND_SIZE}" viewBox="0 0 24 24" ` +
+    `fill="white" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">` +
+    paths.map((d) => `<path d="${d}"/>`).join("") +
+    `</svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}") ${HAND_SIZE / 2} ${HAND_SIZE / 2}`;
+};
+const CURSOR_GRAB = `${handCursor([
+  "M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2",
+  "M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2",
+  "M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8",
+  "M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15",
+])}, grab`;
+const CURSOR_GRABBING = `${handCursor([
+  "M18 11.5V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1.4",
+  "M14 10V8a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2",
+  "M10 9.9V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v5",
+  "M6 14a2 2 0 0 0-2-2a2 2 0 0 0-2 2",
+  "M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8 2 2 0 1 1 4 0",
+])}, grabbing`;
+
 // ── Bright yellow "CLICK TO CONTROL AND READ" frame around the viewer ────────────────────────────────
-const FRAME = 26; // border thickness, px
+const FRAME = 13; // border thickness, px
 const CLICK_TEXT = "CLICK TO CONTROL AND READ • ".repeat(40);
 
 function ClickFrame() {
   const strip =
-    "absolute flex items-center overflow-hidden whitespace-nowrap bg-yellow-300 text-[13px] font-bold uppercase leading-none tracking-[0.15em] text-black";
+    "absolute flex items-center overflow-hidden whitespace-nowrap bg-yellow-200 text-[7px] font-bold uppercase leading-none tracking-[0.15em] text-black";
   const font = { fontFamily: '"Courier New", Courier, monospace' };
   // Each strip scrolls its text; it circulates around the frame (top and right
   // run one way, bottom and left the other).
@@ -236,7 +260,7 @@ function ClickFrame() {
     <div
       aria-hidden
       // The viewer is flipped 180°, so flip the frame back to read upright.
-      className="pointer-events-none absolute inset-0 z-20 rotate-180 rounded-sm border-yellow-300"
+      className="pointer-events-none absolute inset-0 z-20 rotate-180 rounded-sm border-yellow-200"
       style={{ borderWidth: FRAME, borderStyle: "solid" }}
     >
       <div
@@ -396,7 +420,7 @@ function TicketCard({ expanded }) {
       className="relative flex h-full rotate-180 items-center p-9 justify-center select-none"
       style={{
         perspective: 900,
-        cursor: grabbing ? "grabbing" : "grab",
+        cursor: grabbing ? CURSOR_GRABBING : CURSOR_GRAB,
         touchAction: "none",
       }}
       onPointerMove={onMove}
