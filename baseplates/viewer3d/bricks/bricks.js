@@ -96,6 +96,9 @@ import { spacesBrick } from "./spaces-XX";
 import { measureBrick } from "./measure-XX";
 import { zSliceBrick } from "./z-slice-XX";
 import { rhinoImportBrick } from "./rhino-import-XX";
+import { empireStateBrick } from "./empire-state-MW";
+import { rockyMountainsBrick } from "./rocky-mountains-MW";
+import { ufoInvasionBrick } from "./ufo-invasion-MW";
 
 export const bricks = [
   massingBrick,
@@ -104,6 +107,9 @@ export const bricks = [
   measureBrick,
   zSliceBrick,
   rhinoImportBrick,
+  empireStateBrick,
+  rockyMountainsBrick,
+  ufoInvasionBrick,
 ];
 
 const byOrder = (a, b) => (a.order ?? 0) - (b.order ?? 0);

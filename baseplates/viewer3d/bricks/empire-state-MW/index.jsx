@@ -1,7 +1,8 @@
 "use client";
 
 /**
- * Empire State Building brick — adds an iconic NYC landmark to the 3D scene.
+ * Empire State Building brick — adds an iconic NYC landmark to the 3D scene,
+ * complete with Godzilla climbing the side!
  *
  * This is a TOOL brick (not a view mode): it renders its own geometry inside the
  * Canvas via Scene3d and provides a toggle in the Toolbar. It doesn't replace the
@@ -11,9 +12,9 @@
  * with the Navy Yard Commons buildings but is still visible in the scene.
  */
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { atom, useAtom } from "jotai";
-import * as THREE from "three";
+import { useFrame } from "@react-three/fiber";
 import { Button } from "@/components/ui/button";
 import { Building2 } from "lucide-react";
 
@@ -51,6 +52,215 @@ const EMPIRE_STATE = {
 
   totalHeight: 443,
 };
+
+/**
+ * Fire! Animated flames engulfing the building.
+ */
+function Fire({ buildingSteps }) {
+  const flamesRef = useRef();
+  
+  useFrame((state) => {
+    if (flamesRef.current) {
+      // Animate each flame child
+      flamesRef.current.children.forEach((flame, i) => {
+        const t = state.clock.elapsedTime;
+        // Flickering scale
+        flame.scale.y = 1 + Math.sin(t * 8 + i * 2) * 0.3;
+        flame.scale.x = 1 + Math.sin(t * 6 + i * 3) * 0.2;
+        // Slight position wobble
+        flame.position.x += Math.sin(t * 10 + i) * 0.05;
+      });
+    }
+  });
+
+  // Generate flames at various points on the building
+  const flames = [];
+  buildingSteps.forEach((step, stepIdx) => {
+    // More flames on middle sections
+    const flameCount = stepIdx < 4 ? 8 : 3;
+    for (let i = 0; i < flameCount; i++) {
+      const angle = (i / flameCount) * Math.PI * 2;
+      const radius = Math.min(step.width, step.depth) * 0.4;
+      flames.push({
+        key: `flame-${stepIdx}-${i}`,
+        position: [
+          Math.cos(angle) * radius,
+          Math.sin(angle) * radius,
+          step.baseZ + step.height * 0.5 + Math.random() * step.height * 0.3,
+        ],
+        scale: [4 + Math.random() * 4, 8 + Math.random() * 12, 4 + Math.random() * 4],
+        color: Math.random() > 0.3 ? "#ff4400" : "#ffaa00",
+      });
+    }
+  });
+
+  return (
+    <group ref={flamesRef}>
+      {flames.map((flame) => (
+        <mesh key={flame.key} position={flame.position} scale={flame.scale}>
+          <octahedronGeometry args={[1, 0]} />
+          <meshStandardMaterial
+            color={flame.color}
+            emissive={flame.color}
+            emissiveIntensity={2}
+            transparent
+            opacity={0.8}
+          />
+        </mesh>
+      ))}
+      {/* Big central fire column */}
+      <mesh position={[0, 0, 200]}>
+        <cylinderGeometry args={[5, 15, 80, 8]} />
+        <meshStandardMaterial color="#ff6600" emissive="#ff4400" emissiveIntensity={1.5} transparent opacity={0.6} />
+      </mesh>
+      <mesh position={[0, 0, 260]}>
+        <cylinderGeometry args={[3, 10, 60, 8]} />
+        <meshStandardMaterial color="#ffaa00" emissive="#ff6600" emissiveIntensity={2} transparent opacity={0.7} />
+      </mesh>
+    </group>
+  );
+}
+
+/**
+ * Smoke rising from the building
+ */
+function Smoke() {
+  const smokeRef = useRef();
+  
+  useFrame((state) => {
+    if (smokeRef.current) {
+      smokeRef.current.children.forEach((puff, i) => {
+        // Rise upward
+        puff.position.z += 0.3;
+        // Expand as it rises
+        puff.scale.x += 0.01;
+        puff.scale.y += 0.01;
+        // Fade out
+        if (puff.material) puff.material.opacity = Math.max(0, puff.material.opacity - 0.002);
+        // Reset when too high or faded
+        if (puff.position.z > 600 || puff.material.opacity <= 0) {
+          puff.position.z = 200 + Math.random() * 150;
+          puff.position.x = (Math.random() - 0.5) * 40;
+          puff.position.y = (Math.random() - 0.5) * 40;
+          puff.scale.set(1, 1, 1);
+          if (puff.material) puff.material.opacity = 0.4;
+        }
+      });
+    }
+  });
+
+  const smokePuffs = Array.from({ length: 20 }, (_, i) => ({
+    key: `smoke-${i}`,
+    position: [(Math.random() - 0.5) * 40, (Math.random() - 0.5) * 40, 200 + Math.random() * 200],
+    scale: 5 + Math.random() * 10,
+  }));
+
+  return (
+    <group ref={smokeRef}>
+      {smokePuffs.map((puff) => (
+        <mesh key={puff.key} position={puff.position} scale={puff.scale}>
+          <sphereGeometry args={[1, 8, 8]} />
+          <meshStandardMaterial color="#333333" transparent opacity={0.4} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+/**
+ * Godzilla! The King of the Monsters climbing the Empire State Building.
+ * Built from simple box geometry to create a recognizable silhouette.
+ */
+function Godzilla({ buildingWidth }) {
+  const groupRef = useRef();
+  
+  // Animate Godzilla - subtle breathing/movement
+  useFrame((state) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.5) * 0.02;
+      const breathe = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.01;
+      groupRef.current.scale.x = breathe;
+    }
+  });
+
+  const godzillaColor = "#2d4a3e";
+  const bellyColor = "#4a5a4a";
+  const spineColor = "#1a2f25";
+  const climbHeight = 280;
+  const sideOffset = buildingWidth / 2 + 15;
+
+  return (
+    <group ref={groupRef} position={[sideOffset, 0, climbHeight]} rotation={[0, 0, 0.1]}>
+      {/* Body */}
+      <mesh position={[0, 0, 0]} castShadow>
+        <boxGeometry args={[25, 20, 50]} />
+        <meshStandardMaterial color={godzillaColor} roughness={0.8} />
+      </mesh>
+      <mesh position={[-8, 0, -5]} castShadow>
+        <boxGeometry args={[10, 16, 40]} />
+        <meshStandardMaterial color={bellyColor} roughness={0.8} />
+      </mesh>
+
+      {/* Head & snout */}
+      <mesh position={[5, 0, 35]} castShadow>
+        <boxGeometry args={[20, 15, 18]} />
+        <meshStandardMaterial color={godzillaColor} roughness={0.8} />
+      </mesh>
+      <mesh position={[15, 0, 33]} castShadow>
+        <boxGeometry args={[12, 10, 10]} />
+        <meshStandardMaterial color={godzillaColor} roughness={0.8} />
+      </mesh>
+
+      {/* Glowing eyes */}
+      <mesh position={[12, 5, 38]}>
+        <sphereGeometry args={[2, 8, 8]} />
+        <meshStandardMaterial color="#ffcc00" emissive="#ff6600" emissiveIntensity={0.5} />
+      </mesh>
+      <mesh position={[12, -5, 38]}>
+        <sphereGeometry args={[2, 8, 8]} />
+        <meshStandardMaterial color="#ffcc00" emissive="#ff6600" emissiveIntensity={0.5} />
+      </mesh>
+
+      {/* Dorsal spines */}
+      {[0, 12, 24, 36, 48].map((zOff, i) => (
+        <mesh key={`spine-${i}`} position={[12, 0, 10 - zOff * 0.8]} rotation={[0, 0, -0.3]} castShadow>
+          <boxGeometry args={[3, 2, 15 - i * 2]} />
+          <meshStandardMaterial color={spineColor} roughness={0.7} />
+        </mesh>
+      ))}
+
+      {/* Arms reaching for building */}
+      <group position={[-10, 10, 20]} rotation={[0.5, 0, 0.8]}>
+        <mesh castShadow><boxGeometry args={[8, 8, 20]} /><meshStandardMaterial color={godzillaColor} roughness={0.8} /></mesh>
+        <mesh position={[-8, 5, 15]} rotation={[0.3, 0, 0.5]} castShadow><boxGeometry args={[6, 6, 15]} /><meshStandardMaterial color={godzillaColor} roughness={0.8} /></mesh>
+        <mesh position={[-15, 8, 22]} castShadow><boxGeometry args={[8, 4, 4]} /><meshStandardMaterial color={spineColor} roughness={0.6} /></mesh>
+      </group>
+      <group position={[-10, -10, 15]} rotation={[-0.3, 0, 0.6]}>
+        <mesh castShadow><boxGeometry args={[8, 8, 18]} /><meshStandardMaterial color={godzillaColor} roughness={0.8} /></mesh>
+        <mesh position={[-6, -5, 12]} rotation={[-0.2, 0, 0.4]} castShadow><boxGeometry args={[6, 6, 14]} /><meshStandardMaterial color={godzillaColor} roughness={0.8} /></mesh>
+      </group>
+
+      {/* Legs */}
+      <group position={[5, 12, -30]} rotation={[0.4, 0, 0]}>
+        <mesh castShadow><boxGeometry args={[12, 12, 25]} /><meshStandardMaterial color={godzillaColor} roughness={0.8} /></mesh>
+        <mesh position={[0, 5, -18]} castShadow><boxGeometry args={[10, 10, 15]} /><meshStandardMaterial color={godzillaColor} roughness={0.8} /></mesh>
+        <mesh position={[5, 5, -28]} castShadow><boxGeometry args={[15, 12, 6]} /><meshStandardMaterial color={spineColor} roughness={0.7} /></mesh>
+      </group>
+      <group position={[5, -12, -35]} rotation={[-0.2, 0, 0]}>
+        <mesh castShadow><boxGeometry args={[12, 12, 25]} /><meshStandardMaterial color={godzillaColor} roughness={0.8} /></mesh>
+        <mesh position={[0, -5, -18]} castShadow><boxGeometry args={[10, 10, 15]} /><meshStandardMaterial color={godzillaColor} roughness={0.8} /></mesh>
+      </group>
+
+      {/* Tail curving down */}
+      <group position={[10, 0, -35]}>
+        <mesh position={[0, 0, 0]} rotation={[0, 0, -0.2]} castShadow><boxGeometry args={[15, 12, 30]} /><meshStandardMaterial color={godzillaColor} roughness={0.8} /></mesh>
+        <mesh position={[15, 0, -20]} rotation={[0, 0, -0.4]} castShadow><boxGeometry args={[12, 10, 25]} /><meshStandardMaterial color={godzillaColor} roughness={0.8} /></mesh>
+        <mesh position={[30, 0, -38]} rotation={[0, 0, -0.6]} castShadow><boxGeometry args={[10, 8, 20]} /><meshStandardMaterial color={godzillaColor} roughness={0.8} /></mesh>
+        <mesh position={[42, 0, -52]} rotation={[0, 0, -0.8]} castShadow><boxGeometry args={[8, 6, 15]} /><meshStandardMaterial color={godzillaColor} roughness={0.8} /></mesh>
+      </group>
+    </group>
+  );
+}
 
 /**
  * Toolbar toggle — shows/hides the Empire State Building.
@@ -120,18 +330,12 @@ function Scene3d({ palette, framing }) {
         );
       })}
 
-      {/* Label pole — a thin line from the top to help identify the building */}
-      <line>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            count={2}
-            array={new Float32Array([0, 0, EMPIRE_STATE.totalHeight, 0, 0, EMPIRE_STATE.totalHeight + 20])}
-            itemSize={3}
-          />
-        </bufferGeometry>
-        <lineBasicMaterial color={palette.accent} linewidth={2} />
-      </line>
+      {/* Fire engulfing the building! */}
+      <Fire buildingSteps={EMPIRE_STATE.steps} />
+      <Smoke />
+
+      {/* Godzilla climbing the building! */}
+      <Godzilla palette={palette} buildingWidth={EMPIRE_STATE.steps[2].width} />
     </group>
   );
 }
