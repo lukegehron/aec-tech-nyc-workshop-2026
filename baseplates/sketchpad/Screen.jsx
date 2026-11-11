@@ -86,7 +86,7 @@ export default function SketchpadScreen() {
           <span className="text-xs text-muted-foreground">Size</span>
           <Slider
             value={[weight]}
-            onValueChange={([v]) => setWeight(v)}
+            onValueChange={(v) => setWeight(Array.isArray(v) ? v[0] : v)}
             min={1}
             max={24}
             step={1}
