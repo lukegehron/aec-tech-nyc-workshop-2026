@@ -82,12 +82,24 @@ import { notesBrick } from "./notes-XX";
 import { checklistBrick } from "./checklist-XX";
 import { hudLG } from "./hud-LG";
 import { cellKE } from "./cell-KE";
+import { bubbleAS } from "./bubble-AS";
+import { punchCardNI } from "./punch-card-NI";
+import { lanyardME } from "./lanyard-ME";
+import { studentIdDY } from "./student-id-DY";
+import { notebookCR } from "./notebook-CR";
+import { posterMH } from "./poster-MH";
 
 export const bricks = [
   notesBrick,
   checklistBrick,
   hudLG,
   cellKE,
+  bubbleAS,
+  punchCardNI,
+  lanyardME,
+  studentIdDY,
+  notebookCR,
+  posterMH,
 ];
 
 export const cardsByOrder = bricks
