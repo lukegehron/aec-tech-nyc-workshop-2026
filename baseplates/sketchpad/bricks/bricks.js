@@ -74,8 +74,9 @@ import { wetInkBrush } from "./wet-ink-PU";
 import { snapBrush } from "./snap-AT";
 import { watercolorBrush } from "./watercolor-AC";
 import { gridBackground, dotsBackground, isometricBackground, paperBackground } from "./backgrounds-JL";
+import { starWipeBrush } from "./star-wipe-AC";
 
-export const bricks = [penBrush, sprayBrush, calligraphyBrush, mirrorBrush, sketchTo3dBrick, wetInkBrush, snapBrush, watercolorBrush, gridBackground, dotsBackground, isometricBackground, paperBackground, smileStampNI];
+export const bricks = [penBrush, sprayBrush, calligraphyBrush, mirrorBrush, sketchTo3dBrick, wetInkBrush, snapBrush, watercolorBrush, gridBackground, dotsBackground, isometricBackground, paperBackground, smileStampNI, starWipeBrush];
 
 function shownBricks(hiddenSet) {
   const hidden =
