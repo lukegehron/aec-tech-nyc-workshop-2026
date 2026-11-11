@@ -1,33 +1,78 @@
 "use client";
 
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { Separator } from "@/components/ui/separator";
-import { docAtom } from "../../atoms";
+import { activeToolIdAtom, docAtom, elementsAtom, setToolAtom } from "../../atoms";
 import { formatLength } from "../../model";
 import { bridgeSettingsAtom } from "./atoms";
-import { BRIDGE_TYPES, bayGridFor } from "./bridge";
+import { BRIDGE_TYPES, PIECES, bayGridFor, collectJoints } from "./bridge";
 
-/** The Bridge tab: type, bay width, height, and what gets drawn. */
+/** The Bridge tab: enter bridge mode, pick the piece to place, and set up preset bridges. */
 export default function BridgePanel() {
   const [opts, setOpts] = useAtom(bridgeSettingsAtom);
   const doc = useAtomValue(docAtom);
+  const elements = useAtomValue(elementsAtom);
+  const activeToolId = useAtomValue(activeToolIdAtom);
+  const setTool = useSetAtom(setToolAtom);
   const patch = (next) => setOpts({ ...opts, ...next });
+  const inMode = activeToolId === "member" || activeToolId === "bridge";
+  const count = (kind) => elements.filter((element) => element.bridge === kind).length;
   const bayMm = doc.grid * bayGridFor(opts) * doc.mmPerUnit;
   const heightMm = doc.grid * opts.heightGrid * doc.mmPerUnit;
 
   return (
     <div className="flex flex-col gap-4 text-sm">
+      <div className="flex flex-col gap-2">
+        <Button
+          size="sm"
+          variant={inMode ? "outline" : "default"}
+          onClick={() => setTool(inMode ? "select" : "member")}
+        >
+          {inMode ? "Exit bridge mode (Esc)" : "Start building (M)"}
+        </Button>
+        <p className="text-xs text-muted-foreground">
+          In bridge mode the canvas turns yellow and the other tools are greyed out. Drag from
+          joint to joint to add a piece. Ends snap to existing joints, then to the grid.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Label className="text-xs">Piece to add</Label>
+        <div className="grid grid-cols-2 gap-1.5">
+          {PIECES.map((piece, i) => (
+            <Button
+              key={piece.value}
+              size="sm"
+              variant={opts.piece === piece.value ? "secondary" : "outline"}
+              aria-pressed={opts.piece === piece.value}
+              onClick={() => {
+                patch({ piece: piece.value });
+                setTool("member");
+              }}
+            >
+              {`${i + 1} · ${piece.label}`}
+            </Button>
+          ))}
+        </div>
+        <p className="text-xs text-muted-foreground">
+          {`On the sheet: ${count("member")} members · ${count("deck")} deck · ${count("cable")} cables · ${count("support")} supports · ${collectJoints(elements).length} joints`}
+        </p>
+      </div>
+
+      <Separator />
+
       <p className="text-xs text-muted-foreground">
-        Pick the Bridge tool (G), then drag from one abutment to the other. Nodes snap to the
-        grid and the span rounds to whole bays.
+        Or drop a whole preset with the Bridge tool (G). It arrives as separate pieces you can
+        delete or add to.
       </p>
 
       <div className="flex flex-col gap-2">
-        <Label className="text-xs">Type</Label>
+        <Label className="text-xs">Preset type</Label>
         <NativeSelect
           className="w-full"
           value={opts.type}
@@ -93,7 +138,7 @@ export default function BridgePanel() {
       </div>
       <div className="flex items-center justify-between">
         <Label className="text-xs" htmlFor="ve-bridge-nodes">
-          Node dots
+          Joint dots
         </Label>
         <Switch
           id="ve-bridge-nodes"
