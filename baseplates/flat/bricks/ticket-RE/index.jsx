@@ -52,7 +52,7 @@ function Field({ label, children }) {
 
 function TicketCard({ expanded }) {
   return (
-    <div className="flex h-full items-center justify-center">
+    <div className="flex h-full rotate-180 items-center justify-center">
       <div
         className={`flex w-full items-stretch rounded-lg border-2 border-neutral-700 bg-black ${
           expanded ? "max-w-3xl" : "max-w-xl"
