@@ -109,6 +109,7 @@ import { xlsStickerME } from "./xls-sticker-ME";
 import { aiSummarizerBrick } from "./ai-summarizer-LG";
 import { sharedSpaceDY } from "./shared-space-DY";
 import { amoebaAC } from "./amoeba-AC";
+import { photoArtAT } from "./photo-art-AT";
 
 export const bricks = [
   notesBrick,
@@ -142,6 +143,7 @@ export const bricks = [
   aiSummarizerBrick,
   sharedSpaceDY,
   amoebaAC,
+  photoArtAT,
 ];
 
 export const cardsByOrder = bricks
