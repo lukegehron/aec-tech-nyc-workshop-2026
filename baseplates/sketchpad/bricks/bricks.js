@@ -71,11 +71,9 @@ import { mirrorBrush } from "./mirror-XX";
 import { sketchTo3dBrick } from "./sketch-to-3d-LG";
 import { wetInkBrush } from "./wet-ink-PU";
 import { snapBrush } from "./snap-AT";
-
-export const bricks = [penBrush, sprayBrush, calligraphyBrush, mirrorBrush, sketchTo3dBrick, wetInkBrush, snapBrush];
 import { watercolorBrush } from "./watercolor-AC";
 
-export const bricks = [penBrush, sprayBrush, calligraphyBrush, mirrorBrush, sketchTo3dBrick, watercolorBrush];
+export const bricks = [penBrush, sprayBrush, calligraphyBrush, mirrorBrush, sketchTo3dBrick, wetInkBrush, snapBrush, watercolorBrush];
 
 function shownBricks(hiddenSet) {
   const hidden =

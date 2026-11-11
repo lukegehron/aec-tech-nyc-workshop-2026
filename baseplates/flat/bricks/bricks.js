@@ -87,7 +87,6 @@ import { specSheetLU } from "./spec-sheet-LU";
 import { panoSN } from "./pano-SN";
 import { skySN } from "./sky-SN";
 import { cellKE } from "./cell-KE";
-import { bubbleAS } from "./bubble-AS";
 import { bubbleAW } from "./bubble-AW";
 import { punchCardNI } from "./punch-card-NI";
 import { lanyardME } from "./lanyard-ME";
@@ -122,7 +121,6 @@ export const bricks = [
   panoSN,
   skySN,
   cellKE,
-  bubbleAS,
   bubbleAW,
   punchCardNI,
   lanyardME,
