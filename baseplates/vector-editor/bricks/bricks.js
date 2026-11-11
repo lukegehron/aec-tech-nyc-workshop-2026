@@ -89,6 +89,7 @@ import { layersBrick } from "./layers-XX";
 import { documentBrick } from "./document-XX";
 import { aiBrick } from "./ai-XX";
 import { exportBrick } from "./export-XX";
+import { bridgeBuilderMH } from "./bridge-builder-MH";
 
 export const bricks = [
   selectBrick,
@@ -103,6 +104,7 @@ export const bricks = [
   documentBrick,
   aiBrick,
   exportBrick,
+  bridgeBuilderMH,
 ];
 
 function shownBricks(hiddenSet) {
