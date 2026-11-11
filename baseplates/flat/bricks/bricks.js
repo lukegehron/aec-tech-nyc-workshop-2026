@@ -96,6 +96,7 @@ import { metalCardKR } from "./metal-card-KR";
 import { pinSetAN } from "./pin-set-AN";
 import { badgeEL } from "./badge-EL";
 import { posterHS } from "./poster-HS";
+import { magicCardDY } from "./magic-card-DY";
 
 export const bricks = [
   notesBrick,
@@ -116,6 +117,7 @@ export const bricks = [
   pinSetAN,
   badgeEL,
   posterHS,
+  magicCardDY,
 ];
 
 export const cardsByOrder = bricks
