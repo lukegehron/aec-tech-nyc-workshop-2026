@@ -96,6 +96,7 @@ import { blueprintJE } from "./blueprint-JE";
 import { metalCardKR } from "./metal-card-KR";
 import { pinSetAN } from "./pin-set-AN";
 import { badgeEL } from "./badge-EL";
+import { photoArtAT } from "./photo-art-AT";
 
 export const bricks = [
   notesBrick,
@@ -116,6 +117,7 @@ export const bricks = [
   metalCardKR,
   pinSetAN,
   badgeEL,
+  photoArtAT,
 ];
 
 export const cardsByOrder = bricks
