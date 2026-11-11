@@ -99,6 +99,7 @@ import { rhinoImportBrick } from "./rhino-import-XX";
 import { dontClickBrick } from "./dont-click-RH";
 import { ltlRenderBrick } from "./ltl-render-CD";
 import { spaceshipBrick } from "./spaceship-KC";
+import { wallToolLU } from "./wall-tool-LU";
 
 export const bricks = [
   massingBrick,
@@ -110,6 +111,7 @@ export const bricks = [
   dontClickBrick,
   ltlRenderBrick,
   spaceshipBrick,
+  wallToolLU,
 ];
 
 const byOrder = (a, b) => (a.order ?? 0) - (b.order ?? 0);
