@@ -82,6 +82,7 @@ import { notesBrick } from "./notes-XX";
 import { checklistBrick } from "./checklist-XX";
 import { hudLG } from "./hud-LG";
 import { studentIdDY } from "./student-id-DY";
+import { notebookCR } from "./notebook-CR";
 import { posterMH } from "./poster-MH";
 
 export const bricks = [
@@ -89,6 +90,7 @@ export const bricks = [
   checklistBrick,
   hudLG,
   studentIdDY,
+  notebookCR,
   posterMH,
 ];
 
