@@ -84,6 +84,8 @@ import { hudLG } from "./hud-LG";
 import { nametagAC } from "./nametag-AC";
 import { pinSN } from "./pin-SN";
 import { specSheetLU } from "./spec-sheet-LU";
+import { panoSN } from "./pano-SN";
+import { skySN } from "./sky-SN";
 import { cellKE } from "./cell-KE";
 import { bubbleAS } from "./bubble-AS";
 import { punchCardNI } from "./punch-card-NI";
@@ -105,6 +107,9 @@ import { surveyJA } from "./survey-JA";
 import { ticketRE } from "./ticket-RE";
 import { xlsStickerME } from "./xls-sticker-ME";
 import { aiSummarizerBrick } from "./ai-summarizer-LG";
+import { sharedSpaceDY } from "./shared-space-DY";
+import { amoebaAC } from "./amoeba-AC";
+import { photoArtAT } from "./photo-art-AT";
 
 export const bricks = [
   notesBrick,
@@ -113,6 +118,8 @@ export const bricks = [
   nametagAC,
   pinSN,
   specSheetLU,
+  panoSN,
+  skySN,
   cellKE,
   bubbleAS,
   punchCardNI,
@@ -134,6 +141,9 @@ export const bricks = [
   ticketRE,
   xlsStickerME,
   aiSummarizerBrick,
+  sharedSpaceDY,
+  amoebaAC,
+  photoArtAT,
 ];
 
 export const cardsByOrder = bricks

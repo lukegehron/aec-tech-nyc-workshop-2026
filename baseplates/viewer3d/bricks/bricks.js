@@ -98,6 +98,9 @@ import { zSliceBrick } from "./z-slice-XX";
 import { rhinoImportBrick } from "./rhino-import-XX";
 import { dontClickBrick } from "./dont-click-RH";
 import { ltlRenderBrick } from "./ltl-render-CD";
+import { spaceshipBrick } from "./spaceship-KC";
+import { wallToolLU } from "./wall-tool-LU";
+import { empireStateEL } from "./empire-state-EL";
 import { clashDetectBrick } from "./clash-detect-ME";
 
 export const bricks = [
@@ -109,6 +112,9 @@ export const bricks = [
   rhinoImportBrick,
   dontClickBrick,
   ltlRenderBrick,
+  spaceshipBrick,
+  wallToolLU,
+  empireStateEL,
   clashDetectBrick,
 ];
 
