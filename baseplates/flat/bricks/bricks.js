@@ -104,6 +104,7 @@ import { appIconAT } from "./app-icon-AT";
 import { surveyJA } from "./survey-JA";
 import { ticketRE } from "./ticket-RE";
 import { xlsStickerME } from "./xls-sticker-ME";
+import { aiSummarizerBrick } from "./ai-summarizer-LG";
 
 export const bricks = [
   notesBrick,
@@ -132,6 +133,7 @@ export const bricks = [
   surveyJA,
   ticketRE,
   xlsStickerME,
+  aiSummarizerBrick,
 ];
 
 export const cardsByOrder = bricks
