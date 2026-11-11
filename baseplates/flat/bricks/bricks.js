@@ -101,6 +101,7 @@ import { magicCardDY } from "./magic-card-DY";
 import { ttyAS } from "./tty-AS";
 import { prBadgeJD } from "./pr-badge-JD";
 import { appIconAT } from "./app-icon-AT";
+import { surveyJA } from "./survey-JA";
 
 export const bricks = [
   notesBrick,
@@ -126,6 +127,7 @@ export const bricks = [
   ttyAS,
   prBadgeJD,
   appIconAT,
+  surveyJA,
 ];
 
 export const cardsByOrder = bricks
