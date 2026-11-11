@@ -201,6 +201,11 @@ const TICKET_KEYFRAMES = `
   75%  { transform: translate3d(var(--sway), -100vh, 0); }
   100% { transform: translate3d(0, -135vh, 0); }
 }
+@keyframes ticketRE-marquee-x { to { transform: translateX(-50%); } }
+@keyframes ticketRE-marquee-y { to { transform: translateY(-50%); } }
+.ticketRE-marquee-x { animation: ticketRE-marquee-x 40s linear infinite; }
+.ticketRE-marquee-y { animation: ticketRE-marquee-y 40s linear infinite; }
+.ticketRE-marquee-rev { animation-direction: reverse; }
 .ticketRE-kaleido-a { animation: ticketRE-spin 24s linear infinite; }
 .ticketRE-kaleido-b { animation: ticketRE-spin-rev 36s linear infinite; }
 .ticketRE-balloon {
@@ -209,9 +214,72 @@ const TICKET_KEYFRAMES = `
   animation-fill-mode: both;
 }
 @media (prefers-reduced-motion: reduce) {
-  .ticketRE-kaleido-a, .ticketRE-kaleido-b { animation: none; }
+  .ticketRE-kaleido-a, .ticketRE-kaleido-b,
+  .ticketRE-marquee-x, .ticketRE-marquee-y { animation: none; }
 }
 `;
+
+// ── Bright yellow "CLICK TO CONTROL AND READ" frame around the viewer ────────────────────────────────
+const FRAME = 26; // border thickness, px
+const CLICK_TEXT = "CLICK TO CONTROL AND READ • ".repeat(40);
+
+function ClickFrame() {
+  const strip =
+    "absolute flex items-center overflow-hidden whitespace-nowrap bg-yellow-300 text-[13px] font-bold uppercase leading-none tracking-[0.15em] text-black";
+  const font = { fontFamily: '"Courier New", Courier, monospace' };
+  // Each strip scrolls its text; it circulates around the frame (top and right
+  // run one way, bottom and left the other).
+  const run = (cls) => (
+    <span className={`inline-block ${cls}`}>{CLICK_TEXT}</span>
+  );
+  return (
+    <div
+      aria-hidden
+      // The viewer is flipped 180°, so flip the frame back to read upright.
+      className="pointer-events-none absolute inset-0 z-20 rotate-180 rounded-sm border-yellow-300"
+      style={{ borderWidth: FRAME, borderStyle: "solid" }}
+    >
+      <div
+        className={strip}
+        style={{ ...font, top: -FRAME, left: -FRAME, right: -FRAME, height: FRAME }}
+      >
+        {run("ticketRE-marquee-x")}
+      </div>
+      <div
+        className={strip}
+        style={{ ...font, bottom: -FRAME, left: -FRAME, right: -FRAME, height: FRAME }}
+      >
+        {run("ticketRE-marquee-x ticketRE-marquee-rev")}
+      </div>
+      <div
+        className={strip}
+        style={{
+          ...font,
+          top: 0,
+          bottom: 0,
+          left: -FRAME,
+          width: FRAME,
+          writingMode: "vertical-rl",
+        }}
+      >
+        {run("ticketRE-marquee-y ticketRE-marquee-rev")}
+      </div>
+      <div
+        className={strip}
+        style={{
+          ...font,
+          top: 0,
+          bottom: 0,
+          right: -FRAME,
+          width: FRAME,
+          writingMode: "vertical-rl",
+        }}
+      >
+        {run("ticketRE-marquee-y")}
+      </div>
+    </div>
+  );
+}
 
 function TicketCard({ expanded }) {
   // Hologram: nearly invisible at rest; hovering reveals the ticket and the
@@ -325,7 +393,7 @@ function TicketCard({ expanded }) {
   return (
     <div
       ref={viewportRef}
-      className="relative flex h-full rotate-180 items-center justify-center select-none"
+      className="relative flex h-full rotate-180 items-center p-9 justify-center select-none"
       style={{
         perspective: 900,
         cursor: grabbing ? "grabbing" : "grab",
@@ -344,6 +412,7 @@ function TicketCard({ expanded }) {
       }}
     >
       <style>{TICKET_KEYFRAMES}</style>
+      <ClickFrame />
       <Balloons balloons={balloons} />
       <Kaleidoscope show={kaleidoscopeOn} />
       <div

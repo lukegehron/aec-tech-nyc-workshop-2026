@@ -34,7 +34,13 @@ export const PIECES = [
   { value: "deck", label: "Deck", width: 1.8 },
   { value: "cable", label: "Cable", width: 0.4 },
   { value: "support", label: "Pin support", width: 0.5 },
+  { value: "preset", label: "Whole bridge", width: 0.75 },
 ];
+
+export const pieceLabel = (kind) => PIECES.find((p) => p.value === kind)?.label ?? "Member";
+
+/** Screen px within which a piece end grabs an existing joint. */
+export const JOINT_RADIUS = 14;
 
 export const pieceWidth = (kind) => PIECES.find((p) => p.value === kind)?.width ?? 0.75;
 
@@ -74,6 +80,21 @@ export function nearestJoint(point, joints, radius) {
     }
   }
   return best;
+}
+
+/** Where a piece end lands: an existing joint if one is close, otherwise the grid point. */
+export function resolveEnd(raw, gridPoint, elements, zoom) {
+  const joint = raw ? nearestJoint(raw, collectJoints(elements), JOINT_RADIUS / zoom) : null;
+  return { p: joint ?? gridPoint, onJoint: Boolean(joint) };
+}
+
+/** Picking a piece. Picking "Whole bridge" again steps to the next preset type. */
+export function applyPick(pick, opts) {
+  if (pick === "preset" && opts.piece === "preset") {
+    const i = BRIDGE_TYPES.findIndex((t) => t.value === opts.type);
+    return { ...opts, type: BRIDGE_TYPES[(i + 1) % BRIDGE_TYPES.length].value };
+  }
+  return { ...opts, piece: pick };
 }
 
 /** Lock a member to 0° / 45° / 90° from its start, keeping its length. */
