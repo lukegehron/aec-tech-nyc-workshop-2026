@@ -82,12 +82,14 @@ import { notesBrick } from "./notes-XX";
 import { checklistBrick } from "./checklist-XX";
 import { hudLG } from "./hud-LG";
 import { blueprintJE } from "./blueprint-JE";
+import { swissNameplateJB } from "./swiss-nameplate-JB";
 
 export const bricks = [
   notesBrick,
   checklistBrick,
   hudLG,
   blueprintJE,
+  swissNameplateJB,
 ];
 
 export const cardsByOrder = bricks
