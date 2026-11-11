@@ -21,7 +21,6 @@ import {
 import {
   defaultLayout,
   moveTile,
-  occupantKey,
   parseWorkspaceFile,
   placeOccupant,
   placeOccupants,
@@ -84,29 +83,12 @@ export default function FlatScreen() {
     (baseplate) =>
       baseplate.id !== "flat" && !onBoard.has(`baseplate:${baseplate.id}`),
   );
-  const availableBricks = [];
-  for (const baseplate of availableBaseplates) {
-    for (const brick of baseplate.listBricks?.() ?? []) {
-      const occupant = {
-        type: "brick",
-        baseplateId: baseplate.id,
-        id: brick.id,
-      };
-      if (onBoard.has(occupantKey(occupant))) continue;
-      if (!brick.Card && !brick.cards?.[0]?.Card) continue;
-      availableBricks.push({
-        label: `${baseplate.label}: ${brick.label}`,
-        occupant,
-      });
-    }
-  }
   const trayOccupants = [
     ...availableCards.map((card) => ({ type: "card", id: card.id })),
     ...availableBaseplates.map((baseplate) => ({
       type: "baseplate",
       id: baseplate.id,
     })),
-    ...availableBricks.map((entry) => entry.occupant),
   ];
   const showFilters = layout.tiles.some((tile) =>
     occupantUsesScene(tile.occupant),
@@ -166,7 +148,6 @@ export default function FlatScreen() {
           <SurfaceTray
             cards={availableCards}
             baseplates={availableBaseplates}
-            bricks={availableBricks}
             onAdd={(occupant) =>
               customize((current) =>
                 placeOccupant(current, occupant, null, cards),
