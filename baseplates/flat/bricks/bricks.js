@@ -103,7 +103,6 @@ import { prBadgeJD } from "./pr-badge-JD";
 import { appIconAT } from "./app-icon-AT";
 import { surveyJA } from "./survey-JA";
 import { ticketRE } from "./ticket-RE";
-import { amoebaAC } from "./amoeba-AC";
 
 export const bricks = [
   notesBrick,
@@ -131,7 +130,6 @@ export const bricks = [
   appIconAT,
   surveyJA,
   ticketRE,
-  amoebaAC,
 ];
 
 export const cardsByOrder = bricks
