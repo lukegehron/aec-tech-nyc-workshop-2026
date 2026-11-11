@@ -48,6 +48,44 @@ function DontClickToolbar() {
   );
 }
 
+/**
+ * The brick starts hidden in the "Add to this surface" tray (initialed ids are
+ * off by default), and that chip is rendered by the shared KitTray, which a
+ * brick cannot give its own onClick. So the brick listens for a click on that
+ * chip itself and blanks the screen on the very first click.
+ *
+ * The chip's text is exactly "Don't click"; the toolbar button reads "Don't
+ * click this button", so the two cannot be confused. Registered once per page.
+ */
+function blankScreen() {
+  if (document.getElementById("dont-click-RH-blank")) return;
+  const layer = document.createElement("div");
+  layer.id = "dont-click-RH-blank";
+  layer.setAttribute("aria-hidden", "true");
+  Object.assign(layer.style, {
+    position: "fixed",
+    inset: "0",
+    zIndex: "2147483647",
+    background: "#000",
+    cursor: "none",
+  });
+  document.body.appendChild(layer);
+}
+
+if (typeof document !== "undefined" && !window.__dontClickRHListener) {
+  window.__dontClickRHListener = true;
+  document.addEventListener(
+    "click",
+    (event) => {
+      const button = event.target instanceof Element
+        ? event.target.closest("button")
+        : null;
+      if (button && button.textContent.trim() === "Don't click") blankScreen();
+    },
+    true
+  );
+}
+
 export const dontClickBrick = {
   id: "dont-click-RH",
   label: "Don't click",

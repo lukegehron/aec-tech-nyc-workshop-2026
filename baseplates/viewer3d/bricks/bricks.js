@@ -96,12 +96,15 @@ import { spacesBrick } from "./spaces-XX";
 import { measureBrick } from "./measure-XX";
 import { zSliceBrick } from "./z-slice-XX";
 import { rhinoImportBrick } from "./rhino-import-XX";
+import { explodeNI } from "./explode-NI";
 import { dontClickBrick } from "./dont-click-RH";
 import { ltlRenderBrick } from "./ltl-render-CD";
 import { spaceshipBrick } from "./spaceship-KC";
 import { wallToolLU } from "./wall-tool-LU";
 import { empireStateEL } from "./empire-state-EL";
 import { clashDetectBrick } from "./clash-detect-ME";
+import { curtainWallKR } from "./curtain-wall-KR";
+import { switchbackStairKR } from "./switchback-stair-KR";
 
 export const bricks = [
   massingBrick,
@@ -110,12 +113,15 @@ export const bricks = [
   measureBrick,
   zSliceBrick,
   rhinoImportBrick,
+  explodeNI,
   dontClickBrick,
   ltlRenderBrick,
   spaceshipBrick,
   wallToolLU,
   empireStateEL,
   clashDetectBrick,
+  curtainWallKR,
+  switchbackStairKR,
 ];
 
 const byOrder = (a, b) => (a.order ?? 0) - (b.order ?? 0);
