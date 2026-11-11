@@ -2,9 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Check, MessageSquare, RotateCcw, Trash2, X } from "lucide-react";
-import { commentPanelOpenAtom, commentSelectedAtom, commentsAtom } from "./atoms";
+import { commentPanelOpenAtom, commentSelectedAtom, commentsAtom, teamAtom } from "./atoms";
 import {
   Avatar,
   FLUENT_FONT,
@@ -14,6 +14,8 @@ import {
   SHADOW_2,
   formatTime,
 } from "./fluent";
+import { findMentions, splitMentions } from "./mentions";
+import { TeamEditor } from "./Team";
 import { targetText } from "./targets";
 
 /**
@@ -26,6 +28,7 @@ export function CommentPanel() {
   const [comments, setComments] = useAtom(commentsAtom);
   const [selected, setSelected] = useAtom(commentSelectedAtom);
   const setOpen = useSetAtom(commentPanelOpenAtom);
+  const team = useAtomValue(teamAtom);
   const listRef = useRef(null);
 
   // Clicking a pin in the model brings its card into view.
@@ -72,6 +75,8 @@ export function CommentPanel() {
         </button>
       </header>
 
+      <TeamEditor />
+
       <div ref={listRef} className="flex flex-1 flex-col gap-2 overflow-y-auto p-3">
         {ordered.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 text-center">
@@ -87,6 +92,7 @@ export function CommentPanel() {
           <CommentCard
             key={comment.id}
             comment={comment}
+            team={team}
             active={comment.id === selected}
             onSelect={() => setSelected(comment.id === selected ? null : comment.id)}
             onResolve={() => setResolved(comment.id, !comment.resolved)}
@@ -99,7 +105,7 @@ export function CommentPanel() {
   );
 }
 
-function CommentCard({ comment, active, onSelect, onResolve, onDelete }) {
+function CommentCard({ comment, team, active, onSelect, onResolve, onDelete }) {
   return (
     <article
       data-comment={comment.id}
@@ -136,8 +142,21 @@ function CommentCard({ comment, active, onSelect, onResolve, onDelete }) {
           {targetText(comment.target)}
         </span>
         <span className="mt-1 block whitespace-pre-wrap break-words text-[14px] leading-5">
-          {comment.text}
+          {splitMentions(comment.text, team).map((part, i) =>
+            part.mention ? (
+              <span key={i} className="font-semibold text-[color:var(--f-brand-fg)]">
+                {part.text}
+              </span>
+            ) : (
+              part.text
+            ),
+          )}
         </span>
+        {findMentions(comment.text, team).length > 0 ? (
+          <span className="mt-1 block text-[12px] leading-4 text-[color:var(--f-fg3)]">
+            Mentioned: {findMentions(comment.text, team).map((m) => m.name).join(", ")}
+          </span>
+        ) : null}
       </button>
 
       <div className="mt-2 flex justify-end gap-1">

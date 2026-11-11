@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { SendHorizontal, Trash2 } from "lucide-react";
 import {
   AUTHOR,
@@ -12,6 +12,7 @@ import {
   SHADOW_8,
   SHIELD,
 } from "./fluent";
+import { handleOf, queryAt } from "./mentions";
 import { targetText } from "./targets";
 
 // Both components render inside drei's <Html>, which is its own React root:
@@ -42,9 +43,34 @@ export function Pin({ label, title, resolved = false, selected = false, onClick 
 }
 
 /** The draft card that opens where you clicked. */
-export function Composer({ target, onSubmit, onDiscard }) {
+export function Composer({ target, team = [], onSubmit, onDiscard }) {
   const [text, setText] = useState("");
+  const [caret, setCaret] = useState(0);
+  const [choice, setChoice] = useState(0);
+  const ref = useRef(null);
   const value = text.trim();
+
+  // The @partial being typed, and the teammates that match it.
+  const mention = queryAt(text, caret);
+  const matches = mention
+    ? team
+        .filter((m) => handleOf(m).toLowerCase().startsWith(mention.query.toLowerCase()))
+        .slice(0, 5)
+    : [];
+  const active = Math.min(choice, Math.max(matches.length - 1, 0));
+
+  const pick = (member) => {
+    const after = text.slice(caret);
+    const next = `${text.slice(0, mention.start)}@${handleOf(member)} ${after}`;
+    const at = mention.start + handleOf(member).length + 2;
+    setText(next);
+    setCaret(at);
+    setChoice(0);
+    requestAnimationFrame(() => {
+      ref.current?.focus();
+      ref.current?.setSelectionRange(at, at);
+    });
+  };
   const send = () => {
     if (value) onSubmit(value);
   };
@@ -69,9 +95,28 @@ export function Composer({ target, onSubmit, onDiscard }) {
       <textarea
         autoFocus
         rows={2}
+        ref={ref}
         value={text}
-        onChange={(event) => setText(event.target.value)}
+        onChange={(event) => {
+          setText(event.target.value);
+          setCaret(event.target.selectionStart);
+          setChoice(0);
+        }}
+        onSelect={(event) => setCaret(event.target.selectionStart)}
         onKeyDown={(event) => {
+          if (matches.length > 0) {
+            if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+              event.preventDefault();
+              const step = event.key === "ArrowDown" ? 1 : -1;
+              setChoice((active + step + matches.length) % matches.length);
+              return;
+            }
+            if (event.key === "Enter" || event.key === "Tab") {
+              event.preventDefault();
+              pick(matches[active]);
+              return;
+            }
+          }
           if (event.key === "Enter" && !event.shiftKey) {
             event.preventDefault();
             send();
@@ -83,6 +128,42 @@ export function Composer({ target, onSubmit, onDiscard }) {
         aria-label={`Comment on ${targetText(target)}`}
         className="mt-2 block w-full resize-none bg-transparent text-[14px] leading-5 outline-none placeholder:text-[color:var(--f-fg3)]"
       />
+
+      {matches.length > 0 ? (
+        <ul
+          role="listbox"
+          aria-label="Mention a teammate"
+          className="mt-1 overflow-hidden rounded-[4px] border border-[color:var(--f-stroke2)] bg-[var(--f-bg1)]"
+          style={{ boxShadow: SHADOW_8 }}
+        >
+          {matches.map((member, i) => (
+            <li key={member.id} role="option" aria-selected={i === active}>
+              <button
+                type="button"
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                  pick(member);
+                }}
+                className={`flex w-full items-center gap-2 px-2 py-1 text-left ${
+                  i === active ? "bg-[var(--f-brand-bg2)]" : "hover:bg-[var(--f-bg3)]"
+                }`}
+              >
+                <Avatar name={member.name} size={20} />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-[14px] leading-5">{member.name}</span>
+                  <span className="block truncate text-[12px] leading-4 text-[color:var(--f-fg3)]">
+                    {member.email}
+                  </span>
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : mention && team.length === 0 ? (
+        <div className="mt-1 text-[12px] leading-4 text-[color:var(--f-fg3)]">
+          No team yet — add people in the Comments panel.
+        </div>
+      ) : null}
 
       <div className="mt-1 flex items-center justify-between">
         <button

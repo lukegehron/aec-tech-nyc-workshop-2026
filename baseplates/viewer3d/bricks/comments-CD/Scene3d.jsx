@@ -11,9 +11,11 @@ import {
   commentPanelOpenAtom,
   commentSelectedAtom,
   commentsAtom,
+  teamAtom,
 } from "./atoms";
 import { Composer, Pin } from "./Composer";
 import { AUTHOR, BRAND_3D, FLUENT_FONT, FLUENT_VARS, SHADOW_8 } from "./fluent";
+import { findMentions, mailtoFor, openMail } from "./mentions";
 import { describeHit, targetsFrom, targetText } from "./targets";
 
 // Below this many pixels of travel a press-and-release is a click; above it
@@ -49,6 +51,7 @@ export function CommentScene({ data, palette }) {
   const [draft, setDraft] = useAtom(commentDraftAtom);
   const [selected, setSelected] = useAtom(commentSelectedAtom);
   const setPanelOpen = useSetAtom(commentPanelOpenAtom);
+  const team = useAtomValue(teamAtom);
   const [hover, setHover] = useState(null);
   const hoverId = useRef(null);
 
@@ -126,6 +129,7 @@ export function CommentScene({ data, palette }) {
   // fire after `setDraft(null)` and would otherwise read a null draft.
   const post = (text, from) => {
     if (!from?.point) return;
+    const mentioned = findMentions(text, team);
     const comment = {
       id: crypto.randomUUID(),
       text,
@@ -134,11 +138,18 @@ export function CommentScene({ data, palette }) {
       resolved: false,
       point: from.point,
       target: from.target,
+      mentions: mentioned.map((m) => m.id),
     };
     setComments((prev) => [...prev, comment]);
     setDraft(null);
     setSelected(comment.id);
     setPanelOpen(true);
+    // Email everyone mentioned: one pre-filled message in the user's mail app.
+    if (mentioned.length > 0) {
+      openMail(
+        mailtoFor({ members: mentioned, author: AUTHOR, target: from.target, text }),
+      );
+    }
   };
 
   const box = hover?.box;
@@ -192,6 +203,7 @@ export function CommentScene({ data, palette }) {
         <Html position={draft.point} zIndexRange={[60, 50]}>
           <Composer
             target={draft.target}
+            team={team}
             onSubmit={(text) => post(text, draft)}
             onDiscard={() => setDraft(null)}
           />

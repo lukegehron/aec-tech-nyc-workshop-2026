@@ -22,3 +22,10 @@ export const commentSelectedAtom = atom(null);
  * Kept in localStorage on this machine so a reload doesn't lose the review.
  */
 export const commentsAtom = atomWithStorage("viewer3d/comments-CD", []);
+
+/**
+ * The people who can be @mentioned: `{ id, name, email }`, entered by hand in
+ * the panel's Team section. Saved in this browser only.
+ */
+export const teamAtom = atomWithStorage("viewer3d/comments-CD/team", []);
+
