@@ -10,10 +10,34 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 
 /**
- * Capture the p5 pad and send it to Hunyuan3D (via fal). The GLB is loaded
- * with three's GLTFLoader in an effect — not drei's suspending useGLTF —
- * so the WebGL canvas isn't torn down on first load.
+ * Capture the p5 pad and turn it into a GLB, via fal, in two steps:
+ *
+ *   1. RENDER_MODEL  sketch + prompt → a clean single-object render on white
+ *   2. MESH_MODEL    that render → Hunyuan3D GLB
+ *
+ * fal deprecated the one-shot `fal-ai/hunyuan3d-v3/sketch-to-3d` endpoint, so
+ * the "read the sketch" step now happens in an image-edit model first.
+ *
+ * The GLB is loaded with three's GLTFLoader in an effect — not drei's
+ * suspending useGLTF — so the WebGL canvas isn't torn down on first load.
  */
+
+const RENDER_MODEL = "fal-ai/nano-banana/edit";
+const MESH_MODEL = "fal-ai/hunyuan3d-v3/image-to-3d";
+
+/** POST one fal call through the server route and return `data`. */
+async function runFal(model, input) {
+  const response = await fetch("/api/fal", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ model, input }),
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(`${model}: ${payload.error || `Request failed (${response.status}).`}`);
+  }
+  return payload.data;
+}
 
 function ModelViewer({ url }) {
   const [object, setObject] = useState(null);
@@ -66,38 +90,49 @@ function ModelViewer({ url }) {
 
 function SketchTo3dPanel({ getSketchDataUrl }) {
   const [prompt, setPrompt] = useState("a small building, clay material");
-  const [busy, setBusy] = useState(false);
+  const [stage, setStage] = useState(null);
   const [error, setError] = useState(null);
+  const [renderUrl, setRenderUrl] = useState(null);
   const [modelUrl, setModelUrl] = useState(null);
+  const busy = stage !== null;
 
   const generate = async () => {
     if (busy) return;
-    setBusy(true);
+    setStage("Rendering sketch…");
     setError(null);
+    setRenderUrl(null);
     setModelUrl(null);
     try {
-      const imageUrl = getSketchDataUrl();
-      const response = await fetch("/api/fal", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "fal-ai/hunyuan3d-v3/sketch-to-3d",
-          input: {
-            input_image_url: imageUrl,
-            prompt: prompt.trim() || "a 3D object from this sketch",
-            face_count: 40000,
-          },
-        }),
+      const sketchUrl = getSketchDataUrl();
+      const subject = prompt.trim() || "a 3D object";
+
+      // 1. Sketch → clean object render the mesher can read.
+      const rendered = await runFal(RENDER_MODEL, {
+        prompt:
+          `Turn this line sketch into a single 3D object: ${subject}. ` +
+          "Keep the sketch's shape and proportions. Three-quarter view, " +
+          "whole object in frame, plain white background, soft studio lighting, no text.",
+        image_urls: [sketchUrl],
+        num_images: 1,
+        output_format: "png",
       });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || "Request failed.");
-      const glb = payload.data?.model_glb?.url || payload.data?.model_urls?.glb?.url;
+      const imageUrl = rendered?.images?.[0]?.url;
+      if (!imageUrl) throw new Error("The render step didn't return an image.");
+      setRenderUrl(imageUrl);
+
+      // 2. Render → GLB.
+      setStage("Sculpting mesh…");
+      const meshed = await runFal(MESH_MODEL, {
+        input_image_url: imageUrl,
+        face_count: 40000,
+      });
+      const glb = meshed?.model_glb?.url || meshed?.model_urls?.glb?.url;
       if (!glb) throw new Error("Hunyuan didn't return a GLB.");
       setModelUrl(glb);
     } catch (err) {
       setError(String(err.message ?? err));
     } finally {
-      setBusy(false);
+      setStage(null);
     }
   };
 
@@ -108,8 +143,8 @@ function SketchTo3dPanel({ getSketchDataUrl }) {
         <p className="text-sm font-medium">Sketch to 3D</p>
       </div>
       <p className="text-xs text-muted-foreground">
-        Draw on the pad, describe material and colour, and Hunyuan3D (via fal)
-        returns a GLB you can orbit.
+        Draw on the pad and describe material and colour. fal renders the
+        sketch, then Hunyuan3D turns that render into a GLB you can orbit.
       </p>
       <Input
         value={prompt}
@@ -121,9 +156,13 @@ function SketchTo3dPanel({ getSketchDataUrl }) {
       />
       <Button size="sm" onClick={generate} disabled={busy}>
         {busy ? <Spinner className="size-4" /> : <Sparkles className="size-4" />}
-        {busy ? "Sculpting…" : "Generate 3D"}
+        {busy ? stage : "Generate 3D"}
       </Button>
       {error ? <p className="text-xs text-destructive">{error}</p> : null}
+      {renderUrl && !modelUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element -- remote fal URL, preview only
+        <img src={renderUrl} alt="Render of the sketch sent to Hunyuan3D" className="rounded-md border" />
+      ) : null}
       {modelUrl ? <ModelViewer key={modelUrl} url={modelUrl} /> : null}
       {modelUrl ? (
         <Button variant="outline" size="sm" nativeButton={false} render={<a href={modelUrl} download="sketch.glb" />}>
