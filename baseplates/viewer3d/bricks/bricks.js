@@ -100,6 +100,7 @@ import { dontClickBrick } from "./dont-click-RH";
 import { ltlRenderBrick } from "./ltl-render-CD";
 import { spaceshipBrick } from "./spaceship-KC";
 import { wallToolLU } from "./wall-tool-LU";
+import { empireStateEL } from "./empire-state-EL";
 
 export const bricks = [
   massingBrick,
@@ -112,6 +113,7 @@ export const bricks = [
   ltlRenderBrick,
   spaceshipBrick,
   wallToolLU,
+  empireStateEL,
 ];
 
 const byOrder = (a, b) => (a.order ?? 0) - (b.order ?? 0);
