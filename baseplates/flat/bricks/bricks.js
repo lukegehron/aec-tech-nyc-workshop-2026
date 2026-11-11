@@ -81,6 +81,7 @@
 import { notesBrick } from "./notes-XX";
 import { checklistBrick } from "./checklist-XX";
 import { hudLG } from "./hud-LG";
+import { nametagAC } from "./nametag-AC";
 import { pinSN } from "./pin-SN";
 import { specSheetLU } from "./spec-sheet-LU";
 import { cellKE } from "./cell-KE";
@@ -102,6 +103,7 @@ export const bricks = [
   notesBrick,
   checklistBrick,
   hudLG,
+  nametagAC,
   pinSN,
   specSheetLU,
   cellKE,
