@@ -81,11 +81,13 @@
 import { notesBrick } from "./notes-XX";
 import { checklistBrick } from "./checklist-XX";
 import { hudLG } from "./hud-LG";
+import { notebookCR } from "./notebook-CR";
 
 export const bricks = [
   notesBrick,
   checklistBrick,
   hudLG,
+  notebookCR,
 ];
 
 export const cardsByOrder = bricks
