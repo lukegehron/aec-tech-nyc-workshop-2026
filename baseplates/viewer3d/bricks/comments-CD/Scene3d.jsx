@@ -121,15 +121,19 @@ export function CommentScene({ data, palette }) {
   new THREE.Color(palette.ground).getHSL(hsl);
   const brand = hsl.l < 0.5 ? BRAND_3D.dark : BRAND_3D.light;
 
-  const post = (text) => {
+  // Takes the draft as an argument instead of reading it from the closure: the
+  // composer lives in drei's own React root, so a second Enter / click can
+  // fire after `setDraft(null)` and would otherwise read a null draft.
+  const post = (text, from) => {
+    if (!from?.point) return;
     const comment = {
       id: crypto.randomUUID(),
       text,
       author: AUTHOR,
       createdAt: Date.now(),
       resolved: false,
-      point: draft.point,
-      target: draft.target,
+      point: from.point,
+      target: from.target,
     };
     setComments((prev) => [...prev, comment]);
     setDraft(null);
@@ -166,7 +170,7 @@ export function CommentScene({ data, palette }) {
       ) : null}
 
       {comments.map((comment, index) =>
-        comment.resolved && comment.id !== selected ? null : (
+        !Array.isArray(comment?.point) || (comment.resolved && comment.id !== selected) ? null : (
           <Html key={comment.id} position={comment.point} zIndexRange={[30, 20]}>
             <div className="-translate-y-full">
               <Pin
@@ -186,7 +190,11 @@ export function CommentScene({ data, palette }) {
 
       {draft ? (
         <Html position={draft.point} zIndexRange={[60, 50]}>
-          <Composer target={draft.target} onSubmit={post} onDiscard={() => setDraft(null)} />
+          <Composer
+            target={draft.target}
+            onSubmit={(text) => post(text, draft)}
+            onDiscard={() => setDraft(null)}
+          />
         </Html>
       ) : null}
     </group>
