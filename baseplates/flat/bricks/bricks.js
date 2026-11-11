@@ -97,6 +97,7 @@ import { metalCardKR } from "./metal-card-KR";
 import { pinSetAN } from "./pin-set-AN";
 import { badgeEL } from "./badge-EL";
 import { photoArtAT } from "./photo-art-AT";
+import { transitAT } from "./transit-AT";
 
 export const bricks = [
   notesBrick,
@@ -118,6 +119,7 @@ export const bricks = [
   pinSetAN,
   badgeEL,
   photoArtAT,
+  transitAT,
 ];
 
 export const cardsByOrder = bricks
