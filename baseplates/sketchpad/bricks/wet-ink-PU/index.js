@@ -20,23 +20,49 @@
 // sends out more threads.
 //
 // FLOW — the slider's 1–24 value sets how much ink the brush lets go.
+//
+// METAL INKS — pearl-silver and gold flow just like the pigment inks (same
+// wet layer, no mixing, they wind round other passes, same long bleed) but
+// stay opaque, with slightly fuller threads. wetlayer.js shades them as a lit
+// liquid surface; compose() adds a soft glow.
 
-import { INK_ORDER, inkFor } from "./inks";
+import { INK_ORDER, inkFor, isMetal } from "./inks";
 import { isBlankCanvas, layPaper } from "./paper";
 import { installWetInkTheme } from "./theme";
 import { blocked, clearWet, createWet, flush, newPass, stamp } from "./wetlayer";
 
 const HINT = "Wet ink — new ink swirls through wet ink. Dry canvas to start a new layer.";
 const MAX_PARTICLES = 900;
-const SPOT_CHANCE = 0.12; // the rest are threads
 const TURNS = [0.5, -0.5, 1.1, -1.1, 1.7, -1.7]; // how a blocked thread looks for a way round
 
+// How a pass behaves. Metal flows like ink; it just carries more (opaque) and
+// its threads are a little fuller.
+const PIGMENT = {
+  core: 1,
+  load: (flow) => 0.05 + flow * 0.3,
+  spot: 0.12,
+  kick: [0.8, 0.9],
+  life: [60, 110],
+  threadR: [0.35, 0.6],
+  drag: 0.94,
+  threadAmt: (flow) => 0.16 + flow * 0.34,
+  bead: 0.7,
+};
+const METAL = {
+  ...PIGMENT,
+  load: (flow) => 0.3 + flow * 0.5,
+  threadR: [0.6, 0.7],
+  threadAmt: (flow) => 0.4 + flow * 0.4,
+  bead: 1,
+};
+
 // Module state — one canvas.
-let state = null; // { main, dpr, dry, check, wet }
+let state = null; // { main, dpr, dry, last, wet }
 let particles = [];
 let pass = 0;
 let lastFrame = -10;
 let still = 0;
+let kind = PIGMENT;
 
 export const wetInkBrush = {
   id: "wet-ink-PU",
@@ -56,6 +82,7 @@ export const wetInkBrush = {
       from = to; // pmouse is stale from the last stroke
       begin(p, g);
       pass = newPass(state.wet, ink);
+      kind = isMetal(ink) ? METAL : PIGMENT;
     }
 
     const w = state.wet;
@@ -70,8 +97,9 @@ export const wetInkBrush = {
       const t = i / steps;
       const x = from.x + (to.x - from.x) * t;
       const y = from.y + (to.y - from.y) * t;
-      const load = (0.05 + flow * 0.3) / (1 + dist * 0.04); // fast = less ink
-      stamp(w, x, y, size * (0.9 + Math.random() * 0.3), load, pass, false);
+      const load = kind.load(flow) / (1 + dist * 0.04); // fast = less ink
+      const r = size * kind.core * (0.9 + Math.random() * 0.3);
+      stamp(w, x, y, r, load, pass, false);
       spawn(x, y, to.x - from.x, to.y - from.y, size, 1 + Math.round(flow * 2));
     }
 
@@ -102,33 +130,96 @@ export const wetInkBrush = {
         const fade = q.life / q.max;
         if (q.spot) {
           q.r *= 0.975;
-          stamp(w, q.x, q.y, q.r, (0.015 + flow * 0.04) * fade, pass, true);
+          stamp(w, q.x, q.y, q.r, (0.015 + flow * 0.04) * fade * (kind === METAL ? 5 : 1), pass, true);
         } else {
-          thread(w, px, py, q.x, q.y, q.r * (0.45 + 0.55 * fade), (0.16 + flow * 0.34) * fade);
+          thread(w, px, py, q.x, q.y, q.r * (0.45 + 0.55 * fade), kind.threadAmt(flow) * fade);
         }
       }
 
       if (q.life > 0) next.push(q);
       // Pigment settles where the water stops: a darker grain at the tip.
-      else stamp(w, q.x, q.y, 0.7, 0.5 + flow * 0.4, pass, true);
+      else stamp(w, q.x, q.y, kind.bead, 0.5 + flow * 0.4, pass, true);
     }
     particles = next;
 
     flush(w);
-    stack(g);
+    compose();
   },
 };
 
-installWetInkTheme(HINT, { onDry: dryCanvas });
+installWetInkTheme(HINT, { onDry: dryCanvas, onDownload: downloadJpeg, onActive: watchPaper });
+
+// ── paper on by default ──────────────────────────────────────────────────────
+
+// While Wet ink is selected, a white canvas never stays white: lay the paper
+// the moment the brush is picked, and again right after Clear. A light check
+// (two pixels, a few times a second) that stops when another brush is chosen.
+let paperTimer = null;
+function watchPaper() {
+  ensurePaper();
+  if (paperTimer) return;
+  paperTimer = setInterval(() => {
+    if (!document.documentElement.hasAttribute("data-wet-ink")) {
+      clearInterval(paperTimer);
+      paperTimer = null;
+      return;
+    }
+    ensurePaper();
+  }, 250);
+}
+
+function ensurePaper() {
+  const canvas = state?.main?.isConnected ? state.main : findSketchCanvas();
+  const g = canvas?.getContext("2d");
+  if (!g || !isBlankCanvas(g)) return;
+  layPaper(g);
+  if (state?.main === canvas) dryCanvas(); // Clear: drop any wet ink too
+}
+
+// The sketchpad's live p5 canvas (p5 tags its canvases "p5Canvas"; Strict
+// Mode can leave a hidden duplicate, so skip hidden ones).
+function findSketchCanvas() {
+  return [...document.querySelectorAll("canvas.p5Canvas")].find(
+    (c) => c.style.display !== "none" && c.offsetParent !== null
+  );
+}
 
 // ── drying & layers ──────────────────────────────────────────────────────────
 
+// Save exactly what's on the canvas — paper, dried and wet ink — as a .jpeg.
+// Before the first wet-ink stroke we don't hold the canvas yet, so find the
+// sketchpad's visible one.
+export function downloadJpeg() {
+  const canvas =
+    state?.main ??
+    findSketchCanvas();
+  if (!canvas) return;
+  const stampNow = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "");
+  canvas.toBlob(
+    (blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `wet-ink-${stampNow}.jpeg`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    },
+    "image/jpeg",
+    0.92
+  );
+}
+
 // The canvas already shows dry × wet, so drying = "the canvas is the new dry".
+// Another brush and Clear count as drying too.
 export function dryCanvas() {
   if (!state) return;
   copyInto(state.dry, state.main);
   clearWet(state.wet);
   particles = [];
+  copyInto(state.last, state.main);
 }
 
 function begin(p, g) {
@@ -139,20 +230,19 @@ function begin(p, g) {
       main,
       dpr,
       dry: makeCanvas(main.width, main.height),
-      check: makeCanvas(main.width, main.height),
+      last: makeCanvas(main.width, main.height),
       wet: createWet(main.width, main.height, dpr),
     };
-    if (isBlankCanvas(g)) layPaper(p, g);
+    if (isBlankCanvas(g)) layPaper(g);
     copyInto(state.dry, main);
+    copyInto(state.last, main);
     return;
   }
   if (isBlankCanvas(g)) {
-    layPaper(p, g); // Clear was pressed
+    layPaper(g); // Clear was pressed
     dryCanvas();
-  } else if (state.wet.wet && !matchesLastFrame(g)) {
-    dryCanvas(); // another brush drew in the meantime
-  } else if (!state.wet.wet) {
-    copyInto(state.dry, main); // nothing wet: pick up whatever is on the canvas
+  } else if (!matchesLastFrame(g)) {
+    dryCanvas(); // another brush drew in the meantime — that dries the wet ink
   }
 }
 
@@ -172,24 +262,40 @@ function copyInto(target, source) {
   c.restore();
 }
 
-function stack(c) {
+// Redraw the canvas: dry × wet ink, then glowing metal.
+// `last` keeps a copy so we can tell if another brush draws in between.
+function compose() {
+  const c = state.main.getContext("2d");
+  const w = state.wet;
   c.save();
   c.setTransform(1, 0, 0, 1, 0, 0);
   c.globalCompositeOperation = "copy";
   c.drawImage(state.dry, 0, 0);
-  if (state.wet.wet) {
+  if (w.wet) {
     c.globalCompositeOperation = "multiply";
-    c.drawImage(state.wet.canvas, 0, 0);
+    c.drawImage(w.ink.canvas, 0, 0);
+  }
+  if (w.hasMetal) {
+    // Glow: a blurred, brightened copy of the metal, screened onto the paper.
+    if (typeof c.filter === "string") {
+      c.globalCompositeOperation = "screen";
+      c.globalAlpha = 0.55;
+      c.filter = `blur(${6 * state.dpr}px) brightness(1.15)`;
+      c.drawImage(w.metal.canvas, 0, 0);
+      c.filter = "none";
+      c.globalAlpha = 1;
+    }
+    c.globalCompositeOperation = "source-over";
+    c.drawImage(w.metal.canvas, 0, 0);
   }
   c.restore();
+  copyInto(state.last, state.main);
 }
 
 // Is the canvas still exactly what we last drew? (If not, something else drew.)
 function matchesLastFrame(g) {
-  const c = state.check.getContext("2d", { willReadFrequently: true });
-  stack(c);
   const { width, height } = state.main;
-  const a = c.getImageData(0, 0, width, height).data;
+  const a = state.last.getContext("2d", { willReadFrequently: true }).getImageData(0, 0, width, height).data;
   const b = g.getImageData(0, 0, width, height).data;
   let off = 0;
   let seen = 0;
@@ -204,18 +310,18 @@ function matchesLastFrame(g) {
 
 function spawn(x, y, dx, dy, size, n) {
   for (let i = 0; i < n && particles.length < MAX_PARTICLES; i++) {
-    const spot = Math.random() < SPOT_CHANCE;
+    const spot = Math.random() < kind.spot;
     const a = Math.random() * Math.PI * 2;
-    const kick = spot ? 0.4 + Math.random() * 0.6 : 0.8 + Math.random() * 0.9;
-    const max = spot ? 20 + Math.random() * 25 : 60 + Math.random() * 110;
+    const kick = spot ? 0.4 + Math.random() * 0.6 : kind.kick[0] + Math.random() * kind.kick[1];
+    const max = spot ? 20 + Math.random() * 25 : kind.life[0] + Math.random() * kind.life[1];
     particles.push({
       x: x + (Math.random() - 0.5) * size * 0.8,
       y: y + (Math.random() - 0.5) * size * 0.8,
       vx: Math.cos(a) * kick + dx * 0.04,
       vy: Math.sin(a) * kick + dy * 0.04,
-      r: spot ? size * (0.4 + Math.random() * 0.4) : 0.35 + Math.random() * 0.6,
+      r: spot ? size * (0.4 + Math.random() * 0.4) : kind.threadR[0] + Math.random() * kind.threadR[1],
       pull: spot ? 0.15 : 0.22,
-      drag: spot ? 0.9 : 0.94, // threads keep their momentum and run long
+      drag: spot ? 0.9 : kind.drag, // pigment threads keep momentum and run long
       side: Math.random() < 0.5 ? 1 : -1,
       life: max,
       max,

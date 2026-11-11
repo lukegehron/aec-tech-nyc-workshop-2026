@@ -6,9 +6,9 @@
 //
 //   • warm paper-toned background, cards and borders (theme CSS variables)
 //   • a thin, minimal type treatment
-//   • only three swatches, recoloured black / plum / emerald
+//   • swatches recoloured black / plum / emerald / silver / gold
 //   • the "Size" label reads "Flow"
-//   • a "Dry canvas" button appears next to Clear
+//   • "Dry canvas" and "Download JPEG" buttons appear next to Clear
 //
 // How it knows Wet ink is active: the baseplate prints the active brush's
 // `hint` under the canvas. If a <p> with exactly our hint is on the page, we
@@ -19,19 +19,30 @@
 // the "Size" label, the hint line). If those change, the theme quietly stops
 // applying — drawing is unaffected.
 
-import { INK_HEX, SWATCH_FOR_INK } from "./inks";
+import { INK_HEX, INK_ORDER, INK_SHEEN, SWATCH_FOR_INK } from "./inks";
 
 const ATTR = "data-wet-ink";
 const FLOW_ATTR = "data-wet-ink-flow";
 const STYLE_ID = "wet-ink-PU-theme";
 const DRY_ID = "wet-ink-PU-dry";
+const SAVE_ID = "wet-ink-PU-save";
 
 const KEPT = new Set(Object.values(SWATCH_FOR_INK));
+const FIRST_SPECIAL = Object.keys(INK_SHEEN).sort(
+  (a, b) => INK_ORDER.indexOf(a) - INK_ORDER.indexOf(b)
+)[0];
 
 function css() {
   const swatch = (hex) => `html[${ATTR}] button[aria-label="Brush color ${hex}"]`;
   const recolor = Object.entries(SWATCH_FOR_INK)
-    .map(([ink, hex]) => `${swatch(hex)} { background-color: ${INK_HEX[ink]} !important; }`)
+    .map(([ink, hex]) => {
+      const sheen = INK_SHEEN[ink] ? ` background-image: ${INK_SHEEN[ink]} !important;` : "";
+      // Swatches sit in a flex row, so `order` lays them out as INK_ORDER:
+      // the pigments first, then the metals, set off by a small gap.
+      const order = INK_ORDER.indexOf(ink);
+      const gap = ink === FIRST_SPECIAL ? " margin-left: 0.75rem !important;" : "";
+      return `${swatch(hex)} { background-color: ${INK_HEX[ink]} !important;${sheen} order: ${order};${gap} }`;
+    })
     .join("\n");
   const hide = ["#3b82f6", "#f59e0b"]
     .filter((hex) => !KEPT.has(hex))
@@ -93,7 +104,7 @@ ${hide}
 `;
 }
 
-export function installWetInkTheme(hint, { onDry } = {}) {
+export function installWetInkTheme(hint, { onDry, onDownload, onActive } = {}) {
   if (typeof window === "undefined" || typeof document === "undefined") return;
 
   // Hot reload re-runs this module; drop the previous observer first.
@@ -120,10 +131,17 @@ export function installWetInkTheme(hint, { onDry } = {}) {
           span.setAttribute(FLOW_ATTR, "");
         }
       }
-      if (onDry && !document.getElementById(DRY_ID)) addDryButton(onDry);
+      onActive?.();
+      if (onDry && !document.getElementById(DRY_ID)) {
+        addButton(DRY_ID, "Dry canvas", "Dried", "Let the wet ink dry — new ink becomes a separate layer on top", onDry);
+      }
+      if (onDownload && !document.getElementById(SAVE_ID)) {
+        addButton(SAVE_ID, "Download JPEG", "Saved", "Save your artwork as a .jpeg", onDownload);
+      }
     } else {
       if (root.hasAttribute(ATTR)) root.removeAttribute(ATTR);
       document.getElementById(DRY_ID)?.remove();
+      document.getElementById(SAVE_ID)?.remove();
     }
   };
 
@@ -146,24 +164,27 @@ export function installWetInkTheme(hint, { onDry } = {}) {
   window.__wetInkPU = observer;
 }
 
-// Cloned from the baseplate's Clear button so it matches the toolbar.
-function addDryButton(onDry) {
+// Cloned from the baseplate's Clear button so it matches the toolbar. Each new
+// button goes after the last one we added, so the order stays Dry → Download.
+function addButton(id, label, done, title, onClick) {
   const clear = [...document.querySelectorAll("button")].find(
     (b) => b.textContent === "Clear"
   );
   if (!clear) return;
+  const anchor =
+    id === SAVE_ID ? document.getElementById(DRY_ID) ?? clear : clear;
   const button = document.createElement("button");
-  button.id = DRY_ID;
+  button.id = id;
   button.type = "button";
   button.className = clear.className;
-  button.textContent = "Dry canvas";
-  button.title = "Let the wet ink dry — new ink becomes a separate layer on top";
+  button.textContent = label;
+  button.title = title;
   button.addEventListener("click", () => {
-    onDry();
-    button.textContent = "Dried";
+    onClick();
+    button.textContent = done;
     setTimeout(() => {
-      button.textContent = "Dry canvas";
+      button.textContent = label;
     }, 900);
   });
-  clear.after(button);
+  anchor.after(button);
 }

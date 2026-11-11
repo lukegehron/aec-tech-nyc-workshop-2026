@@ -1,4 +1,5 @@
-// Warm paper: laid once onto a fresh (pure white) canvas.
+// Warm paper: laid onto a fresh (pure white) canvas — as soon as Wet ink is
+// selected, and again after Clear. Needs no p5, so it can run outside a stroke.
 
 const PAPER = [238, 224, 198]; // warm cream
 
@@ -12,7 +13,7 @@ export function isBlankCanvas(g) {
   return white(0, 0) && white(width - 1, height - 1);
 }
 
-export function layPaper(p, g) {
+export function layPaper(g) {
   const { width, height } = g.canvas; // device pixels
 
   // Grain: per-pixel tone variation plus low-frequency mottling.
@@ -24,7 +25,7 @@ export function layPaper(p, g) {
   const d = img.data;
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      const mottle = p.noise(x * 0.004, y * 0.004) * 22 - 11;
+      const mottle = noise(x * 0.004, y * 0.004) * 22 - 11;
       const grain = (Math.random() - 0.5) * 14;
       const v = mottle + grain;
       const i = (y * width + x) * 4;
@@ -61,4 +62,22 @@ export function layPaper(p, g) {
     g.stroke();
   }
   g.restore();
+}
+
+// Smooth 2-D value noise in [0, 1] — enough for soft mottling.
+const SEED = Math.random() * 1000;
+function lattice(ix, iy) {
+  const n = Math.sin(ix * 127.1 + iy * 311.7 + SEED) * 43758.5453;
+  return n - Math.floor(n);
+}
+function noise(x, y) {
+  const ix = Math.floor(x);
+  const iy = Math.floor(y);
+  const fx = x - ix;
+  const fy = y - iy;
+  const sx = fx * fx * (3 - 2 * fx);
+  const sy = fy * fy * (3 - 2 * fy);
+  const top = lattice(ix, iy) + (lattice(ix + 1, iy) - lattice(ix, iy)) * sx;
+  const bot = lattice(ix, iy + 1) + (lattice(ix + 1, iy + 1) - lattice(ix, iy + 1)) * sx;
+  return top + (bot - top) * sy;
 }
