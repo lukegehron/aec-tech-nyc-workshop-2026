@@ -7,9 +7,11 @@ const USER = {
   initials: "CR",
   title: "Archi+Tech",
   github: "@dcdixon",
-  seat: "Other",
+  seat: "Technology Strategy",
+  avatarGif:
+    "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzJqdmlnd2dzOGNzemFndGk4eWU5ZGdneDRwcHl4dnlrYm1najVsciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/H5C8CevNMbpBqNqFjl/giphy.gif",
   toolkit: "Excel · Rhino · Revit · Grasshopper · JavaScript · Claude",
-  sticker: "🏗️",
+  sticker: "🤓",
 };
 
 // Fluent 2 "Web UI Kit" look: pale blue→lavender wash, white floating cards,
@@ -40,10 +42,12 @@ function SectionHeading({ children }) {
 
 function NotebookCell({ expanded }) {
   const you = USER;
-  const [portraitFailed, setPortraitFailed] = useState(false);
+  // 0 = GIF, 1 = GitHub portrait, 2 = initials
+  const [stage, setStage] = useState(0);
 
   const github = you.github.replace(/^@/, "");
   const portraitUrl = `https://github.com/${github}.png`;
+  const avatarUrl = stage === 0 ? you.avatarGif : portraitUrl;
   const toolkit = you.toolkit
     .split("·")
     .map((tool) => tool.trim())
@@ -64,7 +68,7 @@ function NotebookCell({ expanded }) {
         className="flex items-center gap-3 bg-white p-3"
         style={{ borderRadius: 8, boxShadow: F.shadowCard }}
       >
-        {portraitFailed ? (
+        {stage >= 2 ? (
           <span
             role="img"
             aria-label={`${you.name} initials`}
@@ -79,13 +83,14 @@ function NotebookCell({ expanded }) {
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={portraitUrl}
+            key={avatarUrl}
+            src={avatarUrl}
             alt={`${you.name} (@${github})`}
             width={48}
             height={48}
             className="size-12 shrink-0 rounded-full object-cover"
             style={{ boxShadow: F.shadowSoft }}
-            onError={() => setPortraitFailed(true)}
+            onError={() => setStage((s) => s + 1)}
           />
         )}
         <div className="min-w-0">
@@ -132,7 +137,7 @@ function NotebookCell({ expanded }) {
           {you.sticker}
         </span>
         <div className="min-w-0">
-          <SectionHeading>Seat</SectionHeading>
+          <SectionHeading>Role</SectionHeading>
           <p className="text-base font-semibold" style={{ color: F.accentDeep }}>
             {you.seat}
           </p>
