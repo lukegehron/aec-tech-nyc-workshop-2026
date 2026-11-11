@@ -98,6 +98,7 @@ import { pinSetAN } from "./pin-set-AN";
 import { badgeEL } from "./badge-EL";
 import { posterHS } from "./poster-HS";
 import { magicCardDY } from "./magic-card-DY";
+import { ttyAS } from "./tty-AS";
 
 export const bricks = [
   notesBrick,
@@ -120,6 +121,7 @@ export const bricks = [
   badgeEL,
   posterHS,
   magicCardDY,
+  ttyAS,
 ];
 
 export const cardsByOrder = bricks
