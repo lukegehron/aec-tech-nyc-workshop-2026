@@ -1,6 +1,6 @@
 "use client";
 
-// Weekend-pass lanyard: a teal, holographic conference badge on a swinging
+// Weekend-pass lanyard: an Arizona-sunset, holographic conference badge on a swinging
 // strap with a hole punch. Avatar, name, title, barcode.
 // Toolkit chips and check-in sit on the front. State survives reload via useCardState.
 
@@ -134,7 +134,7 @@ const SPARKS = Array.from({ length: 10 }, (_, i) => {
   };
 });
 
-// Avatar: portrait in a teal ring, sticker badge in the corner. Tap = sparkle.
+// Avatar: portrait in a ring, sticker badge in the corner. Tap = sparkle.
 // Tap the badge = next sticker.
 function Avatar({ url, initials, sticker, size, burst, onBurst, onSticker }) {
   return (
