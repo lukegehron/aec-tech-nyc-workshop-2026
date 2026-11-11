@@ -219,9 +219,9 @@ const TICKET_KEYFRAMES = `
 }
 `;
 
-// ── Bright yellow "CLICK HERE" frame around the viewer ────────────────────────────────
+// ── Bright yellow "CLICK TO CONTROL AND READ" frame around the viewer ────────────────────────────────
 const FRAME = 26; // border thickness, px
-const CLICK_TEXT = "CLICK HERE • ".repeat(60);
+const CLICK_TEXT = "CLICK TO CONTROL AND READ • ".repeat(40);
 
 function ClickFrame() {
   const strip =
