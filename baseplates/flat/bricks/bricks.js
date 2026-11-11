@@ -90,6 +90,7 @@ import { assetsSN } from "./assets-SN";
 import { viewportsSN } from "./viewports-SN";
 import { topoSN } from "./topo-SN";
 import { stylizerSN } from "./stylizer-SN";
+import { brickColorSN } from "./brick-color-SN";
 import { cellKE } from "./cell-KE";
 import { bubbleAS } from "./bubble-AS";
 import { punchCardNI } from "./punch-card-NI";
@@ -111,6 +112,7 @@ export const bricks = [
   viewportsSN,
   topoSN,
   stylizerSN,
+  brickColorSN,
   cellKE,
   bubbleAS,
   punchCardNI,
