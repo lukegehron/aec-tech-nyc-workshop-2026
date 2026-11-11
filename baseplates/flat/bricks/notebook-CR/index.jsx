@@ -5,22 +5,36 @@ import { useState } from "react";
 const USER = {
   name: "Craig",
   initials: "CR",
-  title: "AEC AI Scout",
+  title: "Archi+Tech",
   github: "@dcdixon",
   seat: "Other",
   toolkit: "Excel · Rhino · Revit · Grasshopper · JavaScript · Claude",
   sticker: "🏗️",
 };
 
-function Prompt({ children, tone = "in" }) {
+// Fluent 2 "Web UI Kit" look: pale blue→lavender wash, white floating cards,
+// periwinkle accent, soft diffuse shadows. Inlined so the brick is self-contained.
+const F = {
+  font: '"Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif',
+  accent: "#7F85F5",
+  accentDeep: "#4F52B2",
+  accentTint: "#E8EBFA",
+  fg1: "#242424",
+  fg2: "#424242",
+  fg3: "#707070",
+  wash: "linear-gradient(135deg, #EEF3FD 0%, #F3F1FD 45%, #EBD9F6 100%)",
+  shadowCard: "0 8px 24px rgba(79,82,178,0.12), 0 1px 3px rgba(0,0,0,0.06)",
+  shadowSoft: "0 4px 12px rgba(79,82,178,0.10)",
+};
+
+function SectionHeading({ children }) {
   return (
-    <span
-      className={`w-14 shrink-0 select-none pr-2 text-right font-mono text-[11px] ${
-        tone === "in" ? "text-blue-600" : "text-orange-600"
-      }`}
+    <h4
+      className="text-xs font-semibold uppercase"
+      style={{ color: F.accentDeep, letterSpacing: "0.08em" }}
     >
       {children}
-    </span>
+    </h4>
   );
 }
 
@@ -36,63 +50,91 @@ function NotebookCell({ expanded }) {
     .filter(Boolean);
 
   return (
-    <div className="flex h-full flex-col gap-3 overflow-auto rounded-md border border-border bg-background p-2 text-sm">
-      {/* Cell 1 — code: the name as a comment-style heading */}
-      <div className="flex items-start rounded border border-border bg-muted/40 py-1.5 pr-2">
-        <Prompt>In [1]:</Prompt>
-        <code className="font-mono text-foreground">
-          <span className="text-muted-foreground"># </span>
-          {you.name}
-        </code>
-      </div>
-
-      {/* Cell 2 — markdown: title and toolkit list */}
-      <div className="flex items-start py-1 pr-2">
-        <Prompt>md</Prompt>
+    <div
+      className="flex h-full flex-col gap-3 overflow-auto p-3 text-sm"
+      style={{
+        fontFamily: F.font,
+        color: F.fg1,
+        background: F.wash,
+        borderRadius: 12,
+      }}
+    >
+      {/* Profile — avatar, name, title */}
+      <div
+        className="flex items-center gap-3 bg-white p-3"
+        style={{ borderRadius: 8, boxShadow: F.shadowCard }}
+      >
+        {portraitFailed ? (
+          <span
+            role="img"
+            aria-label={`${you.name} initials`}
+            className="flex size-12 shrink-0 items-center justify-center rounded-full text-base font-semibold text-white"
+            style={{
+              background: `linear-gradient(135deg, ${F.accent}, #C084D8)`,
+              boxShadow: F.shadowSoft,
+            }}
+          >
+            {you.initials}
+          </span>
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={portraitUrl}
+            alt={`${you.name} (@${github})`}
+            width={48}
+            height={48}
+            className="size-12 shrink-0 rounded-full object-cover"
+            style={{ boxShadow: F.shadowSoft }}
+            onError={() => setPortraitFailed(true)}
+          />
+        )}
         <div className="min-w-0">
           <h3
-            className={`font-heading font-semibold tracking-tight ${
-              expanded ? "text-2xl" : "text-lg"
-            }`}
+            className={`truncate font-semibold ${expanded ? "text-2xl" : "text-xl"}`}
+            style={{ color: F.fg1, lineHeight: 1.2 }}
           >
-            {you.title}
+            {you.name}
           </h3>
-          <p className="mt-1 text-xs text-muted-foreground">Toolkit</p>
-          <ul className="mt-0.5 list-disc pl-5">
-            {toolkit.map((tool) => (
-              <li key={tool}>{tool}</li>
-            ))}
-          </ul>
+          <p className="truncate" style={{ color: F.fg3 }}>
+            {you.title}
+          </p>
         </div>
       </div>
 
-      {/* Output — the seat */}
-      <div className="flex items-start pr-2">
-        <Prompt tone="out">Out[1]:</Prompt>
-        <div className="flex min-w-0 items-center gap-3">
-          {portraitFailed ? (
-            <span
-              role="img"
-              aria-label={`${you.name} initials`}
-              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted font-mono text-xs font-semibold"
-            >
-              {you.initials}
-            </span>
-          ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={portraitUrl}
-              alt={`${you.name} (@${github})`}
-              width={40}
-              height={40}
-              className="size-10 shrink-0 rounded-full object-cover"
-              onError={() => setPortraitFailed(true)}
-            />
-          )}
-          <p className="font-mono text-sm">
-            <span className="text-muted-foreground">seat = </span>
-            <span className="text-emerald-700">&quot;{you.seat}&quot;</span>{" "}
-            <span aria-hidden="true">{you.sticker}</span>
+      {/* Toolkit — list */}
+      <div
+        className="bg-white p-3"
+        style={{ borderRadius: 8, boxShadow: F.shadowCard }}
+      >
+        <SectionHeading>Toolkit</SectionHeading>
+        <ul
+          className="mt-2 list-disc pl-5 marker:text-[#7F85F5]"
+          style={{ color: F.fg2, lineHeight: 1.6 }}
+        >
+          {toolkit.map((tool) => (
+            <li key={tool} style={{ paddingLeft: 2 }}>
+              {tool}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Seat — tinted banner */}
+      <div
+        className="flex items-center gap-3 px-3 py-2.5"
+        style={{
+          background: F.accentTint,
+          borderRadius: 8,
+          boxShadow: F.shadowSoft,
+        }}
+      >
+        <span aria-hidden="true" className="text-2xl">
+          {you.sticker}
+        </span>
+        <div className="min-w-0">
+          <SectionHeading>Seat</SectionHeading>
+          <p className="text-base font-semibold" style={{ color: F.accentDeep }}>
+            {you.seat}
           </p>
         </div>
       </div>
