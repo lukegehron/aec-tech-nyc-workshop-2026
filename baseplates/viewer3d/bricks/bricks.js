@@ -105,6 +105,7 @@ import { empireStateEL } from "./empire-state-EL";
 import { commentsBrick } from "./comments-CD";
 import { clashDetectBrick } from "./clash-detect-ME";
 import { curtainWallKR } from "./curtain-wall-KR";
+import { large3dmBrick } from "./large-3dm-CD";
 
 export const bricks = [
   massingBrick,
@@ -122,6 +123,7 @@ export const bricks = [
   commentsBrick,
   clashDetectBrick,
   curtainWallKR,
+  large3dmBrick,
 ];
 
 const byOrder = (a, b) => (a.order ?? 0) - (b.order ?? 0);
