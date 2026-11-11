@@ -1,68 +1,67 @@
 "use client";
 
-// A conference badge styled as a GitHub pull-request card.
-//   author = name, PR title = job title, files changed = toolkit,
-//   reviewer = seat, green button = merge.
+// Polina's badge: name, cat icon, and a button that sets a cartoon cat loose.
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Cat } from "lucide-react";
 
-const PERSON = {
-  name: "Polina",
-  title: "Agent Operator",
-  github: "polinaustinova00",
-  seat: "Engineer",
-  toolkit: ["Excel", "Rhino", "Revit", "Grasshopper", "ChatGPT", "Claude"],
-  sticker: "🤖",
-  initials: "PO",
-};
+const NAME = "Polina";
 
-const PORTRAIT = `https://github.com/${PERSON.github}.png`;
+// Pick a random spot (in %) that keeps the cat on screen.
+function randomSpot() {
+  return { x: 5 + Math.random() * 85, y: 10 + Math.random() * 75 };
+}
 
-function Avatar({ size }) {
-  const [failed, setFailed] = useState(false);
-  const box = size === "lg" ? "size-12 text-base" : "size-6 text-[10px]";
+// A cartoon cat that hops from spot to spot across the whole viewport.
+function JumpingCat() {
+  const [spot, setSpot] = useState(randomSpot);
+  const hopRef = useRef(null);
 
-  if (failed) {
-    return (
-      <span
-        className={`${box} flex shrink-0 items-center justify-center rounded-full border border-[#ff00ff] bg-black font-semibold text-[#ff00ff]`}
-      >
-        {PERSON.initials}
-      </span>
-    );
-  }
+  useEffect(() => {
+    const id = setInterval(() => {
+      setSpot(randomSpot());
+      hopRef.current?.animate(
+        [
+          { transform: "translateY(0) rotate(0deg) scale(1, 1)" },
+          { transform: "translateY(-90px) rotate(-15deg) scale(0.9, 1.15)", offset: 0.5 },
+          { transform: "translateY(0) rotate(10deg) scale(1.2, 0.8)", offset: 0.9 },
+          { transform: "translateY(0) rotate(0deg) scale(1, 1)" },
+        ],
+        { duration: 700, easing: "ease-in-out" },
+      );
+    }, 800);
+    return () => clearInterval(id);
+  }, []);
+
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={PORTRAIT}
-      alt={PERSON.name}
-      className={`${box} shrink-0 rounded-full object-cover`}
-      onError={() => setFailed(true)}
-    />
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed z-[9999] transition-[left,top] duration-700 ease-in-out"
+      style={{ left: `${spot.x}%`, top: `${spot.y}%` }}
+    >
+      <span ref={hopRef} className="block select-none text-6xl leading-none">
+        🐱
+      </span>
+    </div>
   );
 }
 
 function PrBadgeCard() {
-  const [merged, setMerged] = useState(false);
+  const [jumping, setJumping] = useState(false);
 
   return (
     <div className="flex h-full flex-col items-center justify-center gap-3 rounded-lg border border-[#ff00ff] bg-black p-3 text-[#ff00ff]">
-      <div className="flex items-center gap-3">
-        <Avatar size="lg" />
-        <Cat className="size-8" aria-label="cat" />
-        <span className="text-3xl leading-none" aria-hidden="true">
-          {PERSON.sticker}
-        </span>
-      </div>
-      <p className="font-heading text-xl font-semibold">{PERSON.name}</p>
+      <Cat className="size-10" aria-label="cat" />
+      <p className="font-heading text-xl font-semibold">{NAME}</p>
       <button
         type="button"
-        onClick={() => setMerged((m) => !m)}
-        className="rounded-md bg-green-600 px-3 py-1 text-xs font-semibold text-white hover:bg-green-700"
+        onClick={() => setJumping((j) => !j)}
+        className="rounded-md bg-[#ff00ff] px-3 py-1 text-xs font-semibold text-black hover:bg-[#ff66ff]"
       >
-        {merged ? "Merged" : "Merge"}
+        click me
       </button>
+      {jumping && createPortal(<JumpingCat />, document.body)}
     </div>
   );
 }
@@ -76,7 +75,6 @@ export const prBadgePO = {
       label: "Polina",
       order: 91,
       span: 1,
-      hint: "@polinaustinova00",
       Card: PrBadgeCard,
     },
   ],
