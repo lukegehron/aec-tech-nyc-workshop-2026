@@ -63,8 +63,9 @@ import { penBrush } from "./pen-XX";
 import { sprayBrush } from "./spray-XX";
 import { calligraphyBrush } from "./calligraphy-XX";
 import { mirrorBrush } from "./mirror-XX";
+import { gridBackground, dotsBackground, isometricBackground, paperBackground } from "./backgrounds-JL";
 
-export const bricks = [penBrush, sprayBrush, calligraphyBrush, mirrorBrush];
+export const bricks = [penBrush, sprayBrush, calligraphyBrush, mirrorBrush, gridBackground, dotsBackground, isometricBackground, paperBackground];
 
 function shownBricks(hiddenSet) {
   const hidden =
