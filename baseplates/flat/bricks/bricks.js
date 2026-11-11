@@ -92,6 +92,7 @@ import { notebookCR } from "./notebook-CR";
 import { posterMH } from "./poster-MH";
 import { prBadgePO } from "./pr-badge-PO";
 import { blueprintJE } from "./blueprint-JE";
+import { metalCardKR } from "./metal-card-KR";
 
 export const bricks = [
   notesBrick,
@@ -108,6 +109,7 @@ export const bricks = [
   posterMH,
   prBadgePO,
   blueprintJE,
+  metalCardKR,
 ];
 
 export const cardsByOrder = bricks
