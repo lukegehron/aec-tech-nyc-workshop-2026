@@ -105,6 +105,7 @@ import { empireStateEL } from "./empire-state-EL";
 import { clashDetectBrick } from "./clash-detect-ME";
 import { curtainWallKR } from "./curtain-wall-KR";
 import { switchbackStairKR } from "./switchback-stair-KR";
+import { streetViewME } from "./street-view-ME";
 
 export const bricks = [
   massingBrick,
@@ -122,6 +123,7 @@ export const bricks = [
   clashDetectBrick,
   curtainWallKR,
   switchbackStairKR,
+  streetViewME,
 ];
 
 const byOrder = (a, b) => (a.order ?? 0) - (b.order ?? 0);
