@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { OnBoardContext } from "@/lib/boardChrome";
 import { getBaseplate } from "@/lib/baseplates";
 import { getCard } from "./bricks/bricks";
 import {
@@ -472,6 +473,14 @@ function WorkspaceTile({
 }
 
 function OccupantBody({ tile, cards, expanded }) {
+  return (
+    <OnBoardContext.Provider value={true}>
+      <OccupantInner tile={tile} cards={cards} expanded={expanded} />
+    </OnBoardContext.Provider>
+  );
+}
+
+function OccupantInner({ tile, cards, expanded }) {
   if (tile.occupant.type === "card") {
     const card = cards.find((entry) => entry.id === tile.occupant.id);
     if (!card) {
@@ -519,12 +528,12 @@ function BrickBody({ baseplateId, brickId, expanded }) {
     );
   }
   const brick = findListedBrick(baseplateId, brickId);
-  const Card = brick?.Card ?? brick?.cards?.[0]?.Card;
-  if (Card) return <Card expanded={expanded} />;
   if (baseplate.Host && brick) {
     const Host = baseplate.Host;
     return <Host brick={brick} expanded={expanded} />;
   }
+  const Card = brick?.Card ?? brick?.cards?.[0]?.Card;
+  if (Card) return <Card expanded={expanded} />;
   return (
     <p className="text-sm text-muted-foreground">
       {brick?.label ?? brickId} can&apos;t sit on this board yet — dock the
