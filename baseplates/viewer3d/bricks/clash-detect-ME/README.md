@@ -38,20 +38,35 @@ clash found, each row naming the two elements involved (`wall-1 ↔ wall-2`,
 - Close it with the `✕`, or the clipboard button in the toolbar. Collapsed, it
   leaves a small tab showing the count.
 
-### Why the panel is a drei `<Html>`
+### Why the panel is a portal
 
 The baseplate gives a brick two extension points — `Toolbar` (HTML, in the
 toolbar row) and `Scene3d` (r3f elements, inside `<Canvas>`). There is **no
 side-panel slot**, and adding one would mean editing `Screen.jsx`, which a brick
 must never do.
 
-drei's `<Html>` is the way out: it renders real DOM and appends it to
-`gl.domElement.parentNode`, which here is the Screen's
-`relative h-[70vh] … overflow-hidden` canvas wrapper. So an absolutely
+So the panel portals straight into `gl.domElement.parentElement` with
+`react-dom`'s `createPortal` — that element is the Screen's
+`relative h-[70vh] … overflow-hidden` canvas wrapper, so an absolutely
 positioned card lands docked to the viewer's right edge, clipped to it, exactly
-as if the baseplate had offered a slot. `calculatePosition` is pinned to the
-origin so it behaves as chrome rather than a label tracking a 3D point, and the
-card re-enables `pointer-events` that drei's wrapper disables.
+as if the baseplate had offered a slot.
+
+**It was drei's `<Html>` first, and that did not render.** Worth recording,
+because `<Html>` is the obvious choice and it fails quietly here. `<Html>`
+exists to peg DOM to a *point in the scene*, and it fights anything that isn't
+that:
+
+1. Every frame it runs `isObjectBehindCamera()` on its own group. The panel's
+   group sits at the world origin, and the viewer camera looks at the building
+   from outside the site, so the origin is regularly behind the camera plane —
+   at which point drei sets `display: none` and the panel vanishes.
+2. The frame update is gated on the projected position having *moved*
+   (`|old - new| > eps`), and `oldPosition` starts at `[0, 0]`. Pinning
+   `calculatePosition` to `[0, 0, 0]` to stop the panel drifting means that gate
+   is never satisfied, so the block that sets `display` may never run at all.
+
+Both are a fixed panel being forced through a 3D-label component. A plain portal
+has no camera maths to disagree with and costs nothing per frame.
 
 ## Why it reads the live scene
 
